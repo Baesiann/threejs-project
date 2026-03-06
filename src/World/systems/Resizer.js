@@ -1,0 +1,27 @@
+import { contain } from "three/src/extras/TextureUtils.js";
+
+const setSize = (container, camera, renderer) => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+}
+
+class Resizer {
+  constructor(container, camera, renderer) {
+    // set initial size on load
+    setSize(container, camera, renderer);
+
+    window.addEventListener("resize", () => {
+        // set size again if resize occurs
+        setSize(container, camera, renderer);
+        // perform any custom actions
+        this.onResize();
+    });
+  }
+
+  onResize() {}
+}
+
+export { Resizer };
