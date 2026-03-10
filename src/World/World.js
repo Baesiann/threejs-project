@@ -1,8 +1,9 @@
 import { createCamera } from './components/camera.js';
-import { createCube } from './components/cube.js';
+import { loadModels } from './components/models/models.js';
 import { createLights } from './components/lights.js';
 import { createScene } from './components/scene.js';
 
+import { createControls } from './systems/controls.js';
 import { createRenderer } from './systems/renderer.js';
 import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
@@ -20,17 +21,34 @@ class World {
         scene = createScene();
         renderer = createRenderer();
         loop = new Loop(camera, scene, renderer);
-        // add it to container
         container.append(renderer.domElement);
 
-        const cube = createCube();
-        const light = createLights();
+        const controls = createControls(camera, renderer.domElement);
+        const { ambientLight, mainLight } = createLights();
 
-        loop.updatables.push(cube);
-
-        scene.add(cube, light);
+        loop.updatables.push(controls);
+        scene.add(ambientLight, mainLight);
 
         const resizer = new Resizer(container, camera, renderer);
+    }
+
+    async init() {
+        const {
+            board,
+            blackPawn,
+            blackRook,
+            blackKnight,
+            blackBishop,
+            blackQueen,
+            blackKing,
+            whitePawn,
+            whiteRook,
+            whiteKnight,
+            whiteBishop,
+            whiteQueen,
+            whiteKing
+        } = await loadModels();
+        scene.add(board);
     }
 
     render() {
