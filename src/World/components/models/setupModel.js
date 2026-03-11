@@ -1,4 +1,4 @@
-function setupModel(data) {
+function setupModel(data, pieceType, color, square) {
     const model = data.scene;
 
     return model;

@@ -5,6 +5,7 @@ import { createScene } from './components/scene.js';
 
 import { createControls } from './systems/controls.js';
 import { createRenderer } from './systems/renderer.js';
+import { createRaycaster } from './systems/raycaster.js';
 import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
 
@@ -14,6 +15,7 @@ let camera;
 let renderer;
 let scene;
 let loop;
+let raycaster;
 
 class World {
     constructor(container) {
@@ -22,6 +24,7 @@ class World {
         renderer = createRenderer();
         loop = new Loop(camera, scene, renderer);
         container.append(renderer.domElement);
+        raycaster = new createRaycaster(camera, scene, renderer);
 
         const controls = createControls(camera, renderer.domElement);
         const { ambientLight, mainLight } = createLights();
@@ -49,6 +52,14 @@ class World {
             whiteKing
         } = await loadModels();
         scene.add(board);
+
+        // lower board so pieces sit on top of board
+        board.position.set(0, -0.3, 0);
+
+        // Add pieces for testing
+        scene.add(blackPawn);
+        blackPawn.position.set(1.65, 0, 1.65);
+        raycaster.add(blackPawn);
     }
 
     render() {
