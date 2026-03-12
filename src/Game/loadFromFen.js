@@ -20,18 +20,18 @@ function loadFromFen(fen) {
 
     // Logic to parse the fen string
     var last = fen.substring(fen.indexOf(' ') + 1);     // index of first space
-    var fen_arr = fen.slice(0, fen.length - last.length).split("/");
-    // console.log(last, fen_arr);
+    var fen_arr = fen.split(" ")[0].split("/");
+    console.log(last, fen_arr);
 
     // Uppercase Check function
     const isUpperCase = str => /[A-Z]/.test(str);
 
-    // Fill the board from the fen string
-    let row_index = 7;                                  // Flip board so that "a1" is accurate
+    // Fill the board from the fen string                                 // Flip board so that "a1" is accurate
     for (let i = 0; i < fen_arr.length; i++) {          // For each row of the fen string array
+        let row_index = 7 - i;
         var row_info = fen_arr[row_index].split("");    // Parse the row into individual characters
         var rowPos = 0;                                 // Store relative position pointer for piece insertion
-        row_index--;
+
         for (let j = 0; j < row_info.length; j++) {     // For each char in row
             if (isNaN(parseInt(row_info[j]))) {         // isChar check
                 let pieceColor, pieceType;
@@ -45,7 +45,7 @@ function loadFromFen(fen) {
                 pieceType = pieceFromChar[row_info[j].toLowerCase()];
                 // console.log(typeof pieceColor);
                 // console.log(pieceColor | pieceType);
-                board[i * 8 + rowPos] = pieceType | pieceColor;    // include row offset, OR pieces
+                board[row_index * 8 + rowPos] = pieceType | pieceColor;    // include row offset, OR pieces
                 rowPos++;                               // and offset for inserting piece
             } else {
                 // increment by integer
