@@ -10,12 +10,15 @@
 
 import { loadFromFen } from "./loadFromFen.js";
 import { Piece } from "./Piece.js";
+import { generateMoves } from "./moveGenerator.js";
 
 class Board {
     constructor() {
         const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
+        const testPos = "8/8/8/8/4b3/8/8/8 w - - 0 1"
         // Initialize starting position from fen
         this.Squares = loadFromFen(startPos);
+        this.ColorToMove;
 
         // Store a dictionary to convert char to int
         this.rankDict = {
@@ -76,22 +79,24 @@ class Board {
         return this.Squares;
     }
 
-    // init() {
-    //     // Convert to 2d array for viewing
-    //     console.log(this.Squares);
-    //     // console.log(this.getPiece("h1"));
-    //     // console.log(this.setPiece("a4", Piece.Black, Piece.Bishop));
-    //     console.log(this.movePiece("a2", "a4"));
-    //     var viewBoard = Array.from({ length: 8 }, () => new Array(8));
-    //     let board_index = 0;
-    //     for (let i = 0; i < 8; i++) {
-    //         for (let j = 0; j < 8; j++) {
-    //             viewBoard[i][j] = this.Squares[board_index];
-    //             board_index++;
-    //         }
-    //     }
-    //     console.log(viewBoard);
-    // }
+    init() {
+        // // Convert to 2d array for viewing
+        console.log(this.Squares);
+        // // console.log(this.getPiece("h1"));
+        // // console.log(this.setPiece("a4", Piece.Black, Piece.Bishop));
+        // console.log(this.movePiece("a2", "a4"));
+        // var viewBoard = Array.from({ length: 8 }, () => new Array(8));
+        // let board_index = 0;
+        // for (let i = 0; i < 8; i++) {
+        //     for (let j = 0; j < 8; j++) {
+        //         viewBoard[i][j] = board_index;
+        //         board_index++;
+        //     }
+        // }
+        // console.log(viewBoard);
+        console.log(generateMoves(this.Squares, Piece.Black));
+        // console.log(whoIs(this.Squares, 20, Piece.Black));
+    }
 }
 
 export { Board }

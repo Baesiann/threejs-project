@@ -1,7 +1,6 @@
 /**
  * Generate legal moves
  */
-import { color } from "three/tsl";
 import { Piece } from "./Piece.js";
 
 const numSquaresToEdge = computeBoundary();

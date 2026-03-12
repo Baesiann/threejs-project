@@ -1,5 +1,8 @@
 import { World } from './World/World.js';
 
+// Debugging
+import { Board } from "./Game/Board.js";
+
 // create the main function
 async function main() {
     // get reference to the container element
@@ -13,6 +16,10 @@ async function main() {
 
     // Render the scene
     world.start();
+
+    // Debugging
+    const board = new Board();
+    board.init();
 }
 
 // calling main starts the app
