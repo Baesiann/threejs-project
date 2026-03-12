@@ -54,7 +54,50 @@ function loadFromFen(fen) {
         }
     }
 
-    return board;
+    // Handle the last part of the FEN string
+    var fenParseLast = last.split(' ');
+    // console.log(fenParseLast);
+
+    // Color to move
+    var colorToMove;
+    if (fenParseLast[0] === 'w') {
+        colorToMove = Piece.White;
+    } else {
+        colorToMove = Piece.Black;
+    }
+
+    // Castling rights: save as dict
+    let castling = {
+        White_Kingside: false,
+        White_Queenside: false,
+        Black_Kingside: false,
+        Black_Queenside: false
+    };
+    // split castling rights and iterate safely
+    let castleParse = fenParseLast[1].split('');
+    for (let i = 0; i < castleParse.length; i++) {
+        const ch = castleParse[i];
+        if (ch === 'K') {
+            castling.White_Kingside = true;
+        } else if (ch === 'Q') {
+            castling.White_Queenside = true;
+        } else if (ch === 'k') {
+            castling.Black_Kingside = true;
+        } else if (ch === 'q') {
+            castling.Black_Queenside = true;
+        }
+    }
+
+    // En Passant Target
+    var en_passantable = fenParseLast[2];
+
+    // Halfmove
+    var halfmove = parseInt(fenParseLast[3]);
+
+    // Fullmove
+    var fullmove = parseInt(fenParseLast[4]);
+
+    return { board, colorToMove, castling, en_passantable, halfmove, fullmove };
 }
 
 export { loadFromFen }

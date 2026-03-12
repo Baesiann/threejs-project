@@ -7,7 +7,7 @@ const numSquaresToEdge = computeBoundary();
 
 // Scans every square to collect piece moves
 // example: (Squares, Piece.White)
-function generateMoves(board, color) {
+function generateMoves(board, color, castling, en_passantable) {
     const moves = [];
 
     for (let index = 0; index < board.length; index++) {
@@ -19,7 +19,7 @@ function generateMoves(board, color) {
         // Color has to be included for capturable logic
         if (type < 8 && type > 0) {
             moves.push(
-                generatePieceMoves(board, type, index, color)
+                generatePieceMoves(board, type, index, color, castling, en_passantable)
             )
         }
     }
@@ -28,15 +28,15 @@ function generateMoves(board, color) {
 }
 
 // generates moves from piece
-function generatePieceMoves(board, type, index, color) {
+function generatePieceMoves(board, type, index, color, castling, en_passantable) {
 
     switch(type) {
-        case Piece.Pawn: return pawnMoves(board, index, color);
+        case Piece.Pawn: return pawnMoves(board, index, color, en_passantable);
         case Piece.Knight: return knightMoves(board, index, color);
         case Piece.Bishop: return bishopMoves(board, index, color);
         case Piece.Rook: return rookMoves(board, index, color);
         case Piece.Queen: return queenMoves(board, index, color);
-        case Piece.King: return kingMoves(board, index, color);
+        case Piece.King: return kingMoves(board, index, color, castling);
     }
 }
 
@@ -79,7 +79,7 @@ function whoIs(board, index, color) {
 }
 
 // pawn logic
-function pawnMoves(board, index, color) {
+function pawnMoves(board, index, color, en_passantable) {
     const moves = [];
 
     // pawnDir stores direction of pawn
@@ -107,7 +107,7 @@ function pawnMoves(board, index, color) {
         });
     }
 
-    // check if an enemy piece sits on the diagonal
+    // check if an enemy piece sits on the diagonal     NEW: or enpassantable
     // obtain diagonal indexes and check for realm shift
     let captureOffsets = [7, 9]; 
     for (let offset of captureOffsets) {
@@ -116,7 +116,7 @@ function pawnMoves(board, index, color) {
             let targetCol = target % 8;
             // Ensure the capture is exactly 1 column away
             if (Math.abs(targetCol - (index % 8)) === 1) {
-                if (whoIs(board, target, color) === -1) {
+                if (target === en_passantable || whoIs(board, target, color) === -1) {
                     moves.push({ from: index, to: target });
                 }
             }

@@ -1,106 +1,83 @@
 import { Piece } from "./Piece";
 
-function saveToFen(board, colorToMove, castling, en_passantable, halfmove, fullmove) {
-    var boardString = "";
-    var fenString = "";
+function saveToFen(
+    board,
+    colorToMove,
+    castling = {},
+    en_passantable = '-',
+    halfmove = 0,
+    fullmove = 1
+) {
+    // reverse and split the board
+    const boardCopy = board.slice().reverse();
 
-    board = board.reverse();        // Since we index a1 at 0
+    // keep a default for castling rights
+    const {
+        White_Kingside = false,
+        White_Queenside = false,
+        Black_Kingside = false,
+        Black_Queenside = false,
+    } = castling;
 
-    // Logic to create the boardString
-    for (let i = 0; i < 8; i ++) {
-        let row = board.slice(i * 8, i * 8 + 8);    // obtain row info
-        row = row.reverse();        // noticed backward row
-        // console.log(row);
-        let spaceTracker = 0;       // count space inbetween pieces
+    let boardString = "";
 
-        for (let j = 0; j < row.length; j++) {
-            if (row[j] !== 0) {        // square is occupied
-                // Obtain type and color
-                let type, color;
-                if (row[j] > 16) {
-                    color = Piece.Black;
-                } else {
-                    color = Piece.White;
+    for (let rank = 0; rank < 8; rank++) {
+        const row = boardCopy
+            .slice(rank * 8, rank * 8 + 8)
+            .reverse();
+
+        let empties = 0;
+        for (const square of row) {
+            if (square === 0) {
+                empties++;
+            } else {
+                if (empties > 0) {
+                    boardString += empties;
+                    empties = 0;
                 }
-                type = row[j] - color;
-                console.log(type);
+                const color = square & Piece.Black ? Piece.Black : Piece.White;
+                const type = square - color;
 
-                // Type goes into switch statement to choose concat
-                let target_char = ''
-                switch(type) {
+                let ch;
+                switch (type) {
                     case Piece.King:
-                        target_char = 'k';
+                        ch = 'k';
                         break;
                     case Piece.Pawn:
-                        target_char = 'p';
+                        ch = 'p';
                         break;
                     case Piece.Knight:
-                        target_char = 'n';
+                        ch = 'n';
                         break;
                     case Piece.Bishop:
-                        target_char = 'b';
+                        ch = 'b';
                         break;
                     case Piece.Rook:
-                        target_char = 'r';
+                        ch = 'r';
                         break;
                     case Piece.Queen:
-                        target_char = 'q';
+                        ch = 'q';
                         break;
                     default:
-                        console.log("ugh");
+                        ch = '?';
                 }
-
-                // Uppercase the char if color is white
-                if (color === Piece.White) {
-                    target_char = target_char.toUpperCase();
-                }
-
-                // Concat spaceTracker if not 0
-                if (spaceTracker > 0) {
-                    boardString = boardString.concat(spaceTracker);
-                }
-
-                // Concat the piece
-                boardString = boardString.concat(target_char);
-
-                // reset spaceTracker
-                spaceTracker = 0;
-            }
-            else {
-                spaceTracker++;
+                boardString += color === Piece.White ? ch.toUpperCase() : ch;
             }
         }
-        // concat space tracker if not 0 before /
-        if (spaceTracker > 0) {
-            boardString = boardString.concat(spaceTracker);
-        }
-        boardString = boardString.concat("/");
+        if (empties > 0) boardString += empties;
+        if (rank < 7) boardString += '/';
     }
 
-    // remove the last / from the string
-    boardString = boardString.slice(0, -1);
-    console.log(boardString);
+    let castleString = '';
+    if (White_Kingside) castleString += 'K';
+    if (White_Queenside) castleString += 'Q';
+    if (Black_Kingside) castleString += 'k';
+    if (Black_Queenside) castleString += 'q';
+    if (castleString === '') castleString = '-';
 
-    // append the colorToMove
-    if (colorToMove === Piece.White) {
-        fenString = boardString.concat(" w ");
-    } else {
-        fenString = boardString.concat(" b ");
-    }
-
-    // append the castling rights
-    fenString = fenString.concat(castling);
-
-    // append enpassant target
-    fenString = fenString.concat(" " + en_passantable);
-
-    // append halfmove
-    fenString = fenString.concat(" " + halfmove);
-
-    // append fullmove
-    fenString = fenString.concat(" " + fullmove);
-
-    return fenString;
+    // enhanced ifs....
+    const colorChar = colorToMove === Piece.White ? 'w' : 'b';
+    return `${boardString} ${colorChar} ${castleString} ${en_passantable} ${halfmove} ${fullmove}`;
 }
 
 export { saveToFen };
