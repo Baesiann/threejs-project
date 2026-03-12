@@ -21,7 +21,7 @@ function loadFromFen(fen) {
     // Logic to parse the fen string
     var last = fen.substring(fen.indexOf(' ') + 1);     // index of first space
     var fen_arr = fen.split(" ")[0].split("/");
-    console.log(last, fen_arr);
+    // console.log(last, fen_arr);
 
     // Uppercase Check function
     const isUpperCase = str => /[A-Z]/.test(str);
@@ -29,7 +29,7 @@ function loadFromFen(fen) {
     // Fill the board from the fen string                                 // Flip board so that "a1" is accurate
     for (let i = 0; i < fen_arr.length; i++) {          // For each row of the fen string array
         let row_index = 7 - i;
-        var row_info = fen_arr[row_index].split("");    // Parse the row into individual characters
+        var row_info = fen_arr[i].split("");    // Parse the row into individual characters
         var rowPos = 0;                                 // Store relative position pointer for piece insertion
 
         for (let j = 0; j < row_info.length; j++) {     // For each char in row
