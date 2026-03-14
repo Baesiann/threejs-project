@@ -14,12 +14,12 @@ function computeBoundary() {
             numSquaresToEdge[squareIndex] = [
                 numNorth,
                 numSouth,
-                numWest,
                 numEast,
+                numWest,
+                Math.min(numNorth, numEast),
+                Math.min(numSouth, numWest),
                 Math.min(numNorth, numWest),
                 Math.min(numSouth, numEast),
-                Math.min(numNorth, numEast),
-                Math.min(numSouth, numWest)
             ];
         }
     }

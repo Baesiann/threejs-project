@@ -7,21 +7,22 @@ import { Piece } from "../../Piece";
 import { whoIs } from "./whoIs";
 import { computeBoundary } from "./computeBoundary";
 
+const numSquaresToEdge = computeBoundary();
 
 function generateSlidingMoves (state, index) {
     const moves = [];
     const offsets = [8, -8, 1, -1, 9, -9, 7, -7];
-    const numSquaresToEdge = computeBoundary();
 
     let startDirIndex = (state.Squares[index] === Piece.Bishop) ? 4 : 0;
     let endDirIndex = (state.Squares[index] === Piece.Rook) ? 4 : 8;
 
     for (let dirIndex = startDirIndex; dirIndex < endDirIndex; dirIndex++) {
         for (let i = 1; i <= numSquaresToEdge[index][dirIndex]; i++) {
-            let targetIndex = index + offsets[dirIndex] * i;
+            const targetIndex = index + offsets[dirIndex] * i;
+            const occupant = whoIs(state, targetIndex);
 
             // if a friendly piece is on the square, break loop
-            if (whoIs(state, targetIndex) == 1) {
+            if (occupant === 1) {
                 break;
             }
 
@@ -32,7 +33,7 @@ function generateSlidingMoves (state, index) {
             });
 
             // if there is an enemy on the last move, break loop
-            if (whoIs(state, targetIndex) == - 1) {
+            if (occupant === - 1) {
                 break;
             }
         }
