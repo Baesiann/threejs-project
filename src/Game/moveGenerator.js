@@ -2,7 +2,7 @@
 
 import { Piece } from "./Piece.js";
 import { pawnMoves, knightMoves, kingMoves } from "./pieceMoves/nonSlidingPieceMoves.js";
-import * from "./pieceMoves/slidingPieceMoves.js";
+import { bishopMoves, rookMoves, queenMoves } from "./pieceMoves/slidingPieceMoves.js";
 
 function generateMoves(state) {
     const moves = [];
