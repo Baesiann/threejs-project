@@ -18,6 +18,18 @@ class State {
         return State;
     }
 
+    clone() {
+        const clone = new State();
+        clone.Squares = this.Squares.slice();
+        clone.colorToMove = this.colorToMove;
+        clone.castling = this.castling;
+        clone.en_passantable = this.en_passantable;
+        clone.halfmove = this.halfmove;
+        clone.fullmove = this.fullmove;
+
+        return clone;
+    }
+
     //use for testing
     init() {
         const board = new State();

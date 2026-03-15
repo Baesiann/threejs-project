@@ -45,6 +45,8 @@ function loadFromFen(fen) {
                 pieceType = pieceFromChar[row_info[j].toLowerCase()];
                 // console.log(typeof pieceColor);
                 // console.log(pieceColor | pieceType);
+                // console.log("AT: ");
+                // console.log(row_index * 8 + rowPos);
                 board[row_index * 8 + rowPos] = pieceType | pieceColor;    // include row offset, OR pieces
                 rowPos++;                               // and offset for inserting piece
             } else {
@@ -101,3 +103,13 @@ function loadFromFen(fen) {
 }
 
 export { loadFromFen }
+
+// function printSquares(squares) {
+//     for (let r = 7; r >= 0; r--) {
+//         let row = "";
+//         for (let f = 0; f < 8; f++) {
+//             row += squares[r*8 + f] + " ";
+//         }
+//         console.log(row);
+//     }
+// }

@@ -1,12 +1,12 @@
 // Take in a state and generate psuedolegal moves
 
-import { Piece } from "./Piece.js";
-import { pawnMoves, knightMoves, kingMoves } from "./pieceMoves/nonSlidingPieceMoves.js";
-import { bishopMoves, rookMoves, queenMoves } from "./pieceMoves/slidingPieceMoves.js";
+import { Piece } from "../Piece.js";
+import { pawnMoves, knightMoves, kingMoves } from "./nonSlidingPieceMoves.js";
+import { bishopMoves, rookMoves, queenMoves } from "./slidingPieceMoves.js";
 
 function generateMoves(state) {
     const moves = [];
-    console.log(state.Squares);
+    // console.log(state.Squares);
 
     for (let index = 0; index < state.Squares.length; index++) {
         const piece = state.Squares[index];
