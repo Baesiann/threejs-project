@@ -36,7 +36,7 @@ async function loadModels() {
         loader.loadAsync('assets/white_king.glb'),
     ]);
 
-    console.log('board:', boardData, blackRookData);
+    // console.log('board:', boardData, blackRookData);
 
     const board = setupModel(boardData);
 

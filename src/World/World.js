@@ -9,6 +9,9 @@ import { createRaycaster } from './systems/raycaster.js';
 import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
 
+import { drawPiece } from './helpers/drawPiece.js';
+import { drawLegalMoves } from './helpers/drawLegalMoves.js';
+
 // These variables are module-scoped
 // They cannot be accessed from outside the module
 let camera;
@@ -51,15 +54,85 @@ class World {
             whiteQueen,
             whiteKing
         } = await loadModels();
-        scene.add(board);
+
+        this.board = board;
+        this.blackPawn = blackPawn;
+        this.blackRook = blackRook;
+        this.blackKnight = blackKnight;
+        this.blackBishop = blackBishop;
+        this.blackQueen = blackQueen;
+        this.blackKing = blackKing;
+        this.whitePawn = whitePawn;
+        this.whiteRook = whiteRook;
+        this.whiteKnight = whiteKnight;
+        this.whiteBishop = whiteBishop;
+        this.whiteQueen = whiteQueen;
+        this.whiteKing = whiteKing;
+
+        this.board.traverse((child) => {
+            if (child.isMesh) {
+                child.receiveShadow = true;
+            }
+        });
+        scene.add(this.board);
 
         // lower board so pieces sit on top of board
-        board.position.set(0, -0.3, 0);
+        this.board.position.set(0, -0.3, 0);
+    }
 
-        // Add pieces for testing
-        scene.add(blackPawn);
-        blackPawn.position.set(1.65, 0, 1.65);
-        raycaster.add(blackPawn);
+    updateBoard(state) {
+        // draw each piece to the board
+        for (let i = 0; i < state.Squares.length; i++) {
+            switch(state.Squares[i]) {
+                case 0:
+                    break;
+                case 18:
+                    drawPiece(scene, raycaster, this.blackPawn, i, state);
+                    break;
+                case 21:
+                    drawPiece(scene, raycaster, this.blackRook, i, state);
+                    break;
+                case 19:
+                    drawPiece(scene, raycaster, this.blackKnight, i, state, true);
+                    break;
+                case 20:
+                    drawPiece(scene, raycaster, this.blackBishop, i, state);
+                    break;
+                case 22:
+                    drawPiece(scene, raycaster, this.blackQueen, i, state);
+                    break;
+                case 17:
+                    drawPiece(scene, raycaster, this.blackKing, i, state);
+                    break;
+                case 10:
+                    drawPiece(scene, raycaster, this.whitePawn, i, state);
+                    break;
+                case 13:
+                    drawPiece(scene, raycaster, this.whiteRook, i, state);
+                    break;
+                case 11:
+                    drawPiece(scene, raycaster, this.whiteKnight, i, state);
+                    break;
+                case 12:
+                    drawPiece(scene, raycaster, this.whiteBishop, i, state);
+                    break;
+                case 14:
+                    drawPiece(scene, raycaster, this.whiteQueen, i, state);
+                    break;
+                case 9:
+                    drawPiece(scene, raycaster, this.whiteKing, i, state);
+                    break;
+            }
+        }
+    }
+
+    highlightSquares(moves) {
+        // idk man put a red square where things can go
+        // console.log(moves);
+        for (let i = 0; i < moves.length; i++) {
+            // console.log(moves[i]);
+            drawLegalMoves(scene, raycaster, moves[i].to);
+        }
     }
 
     render() {

@@ -5,6 +5,7 @@ function createRenderer() {
 
     // enable physically correct lighting model
     renderer.physicallyCorrectLights = true;
+    renderer.shadowMap.enabled = true;
 
     return renderer;
 }
