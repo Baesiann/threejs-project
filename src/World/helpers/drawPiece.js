@@ -56,10 +56,13 @@ function drawPiece(group, raycaster, pieceSource, square, state, rotate=false) {
     group.add(piece);
     raycaster.add(piece);
 
+    const color = (isBlack) ? 16 : 8;
+
     // console.log(piece.userData);
     piece.userData = {
         square: square,
         piece: state.Squares[square],
+        color: color,
         moves: state.getLegalMoves(square),
         type: 'piece'
     };

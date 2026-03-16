@@ -6,6 +6,7 @@ class GameController {
         this.world = world;
 
         this.selectedPiece;
+        this.moveHist = [];
 
         // listens to Raycaster.onClick();
         // Click returns userData
@@ -29,13 +30,24 @@ class GameController {
         console.log("PIECE USER DATA: ", userData);
         // Highlight legal moves when user clicks piece
 
-        let moves = this.state.getLegalMoves(userData.square);
-
-        this.selectedPiece = userData.square;
-        console.log("index selected: ", this.selectedPiece);
-
-        this.world.highlightSquares(moves);
-        
+        // Highlight legal moves if it's piece's color to move
+        if (userData.color === this.state.colorToMove) {
+            // console.log("own color", userData.color, this.state.colorToMove);
+            this.selectedPiece = userData.square;
+            let moves = this.state.getLegalMoves(userData.square);
+            this.world.highlightSquares(moves);
+        } else {
+            // Check if the piece is capturable
+            for (let i = 0; i < this.state.moves.length; i++) {
+                console.log(userData.square);
+                if (userData.square === this.state.moves[i].to) {
+                    if (this.selectedPiece === this.state.moves[i].from) {
+                        this.selectIndicator(userData);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     selectIndicator(userData) {
@@ -55,7 +67,10 @@ class GameController {
     }
 
     movePiece(move) {
-        this.state = applyMove(this.state, move);
+        // Track move
+        this.moveHist.push(move);
+
+        applyMove(this.state, move);
 
         this.state.updateMoves();
 

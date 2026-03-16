@@ -72,7 +72,10 @@ class World {
 
         this.pieceGroup = new Group();
         this.pieceGroup.name = 'Pieces';
+        this.indicatorGroup = new Group();
+        this.indicatorGroup.name = 'Indicators';
         scene.add(this.pieceGroup);
+        scene.add(this.indicatorGroup);
 
         this.board.traverse((child) => {
             if (child.isMesh) {
@@ -89,6 +92,7 @@ class World {
         // console.log("updating with state: ", state);
         // clear all existing pieces
         while(this.pieceGroup.children.length > 0) { 
+            raycaster.remove(this.pieceGroup.children[0]);
             this.pieceGroup.remove(this.pieceGroup.children[0]); 
         }
 
@@ -122,18 +126,15 @@ class World {
     highlightSquares(moves) {
         // idk man put a red square where things can go
         // clear board from previous legal moves
-        // console.log(scene.children);
-        for (let i = scene.children.length - 1; i >= 0; i--) {
-            if (scene.children[i].userData.name === 'indicator') {
-                // console.log(scene.children[i]);
-                scene.children[i].removeFromParent();
-                // console.log("child length", scene.children.length);
-            }
+        while(this.indicatorGroup.children.length > 0) { 
+            raycaster.remove(this.indicatorGroup.children[0]);
+            this.indicatorGroup.remove(this.indicatorGroup.children[0]);
         }
+       
         // console.log(moves);
         for (let i = 0; i < moves.length; i++) {
             // console.log(moves[i]);
-            drawLegalMoves(scene, raycaster, moves[i].to);
+            drawLegalMoves(this.indicatorGroup, raycaster, moves[i].to);
         }
     }
 

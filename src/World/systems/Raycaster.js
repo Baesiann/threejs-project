@@ -19,6 +19,13 @@ class createRaycaster {
         this.interactable.push(object);
     }
 
+    remove(object) {
+        const index = this.interactable.indexOf(object);
+        if (index > -1) {
+            this.interactable.splice(index, 1);
+        }
+    }
+
     // changed to handle meshes as well
     findRootObject(object) {
         while (object.parent && !this.interactable.includes(object)) {

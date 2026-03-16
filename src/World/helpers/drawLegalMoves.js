@@ -2,7 +2,7 @@
 
 import { Mesh, MeshBasicMaterial, SphereGeometry } from "three"
 
-function drawLegalMoves(scene, raycaster, square) {
+function drawLegalMoves(group, raycaster, square) {
     // indicator properties
     const geometry = new SphereGeometry(0.4, 16, 8);
     geometry.computeBoundingSphere();
@@ -18,7 +18,7 @@ function drawLegalMoves(scene, raycaster, square) {
     const squareOffset = 1.08;
 
     // add indicator, position it, and make it clickable
-    scene.add(indicator);
+    group.add(indicator);
     indicator.position.set(-origin + col * squareOffset, 0, origin - row *squareOffset);
     raycaster.add(indicator);
 
