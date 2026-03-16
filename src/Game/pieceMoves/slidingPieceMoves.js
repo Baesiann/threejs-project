@@ -1,24 +1,24 @@
 import { generateSlidingMoves } from "./pieceMovesUtils/generateSlidingMoves.js";
 
 // bishop logic
-function bishopMoves(state, index) {
-    const moves = generateSlidingMoves(state, index);
+function bishopMoves(state, index, type) {
+    const moves = generateSlidingMoves(state, index, type);
 
     return moves;
 }
 
 
 // rook logic
-function rookMoves(state, index) {
-    const moves = generateSlidingMoves(state, index);
+function rookMoves(state, index, type) {
+    const moves = generateSlidingMoves(state, index, type);
 
     return moves;
 }
 
 
 // queen logic
-function queenMoves(state, index) {
-    const moves = generateSlidingMoves(state, index);
+function queenMoves(state, index, type) {
+    const moves = generateSlidingMoves(state, index, type);
 
     return moves;
 }

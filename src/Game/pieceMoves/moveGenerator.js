@@ -26,9 +26,9 @@ function generatePieceMoves(state, type, index) {
     switch(type) {
         case Piece.Pawn: return pawnMoves(state, index);
         case Piece.Knight: return knightMoves(state, index);
-        case Piece.Bishop: return bishopMoves(state, index);
-        case Piece.Rook: return rookMoves(state, index);
-        case Piece.Queen: return queenMoves(state, index);
+        case Piece.Bishop: return bishopMoves(state, index, type);
+        case Piece.Rook: return rookMoves(state, index, type);
+        case Piece.Queen: return queenMoves(state, index, type);
         case Piece.King: return kingMoves(state, index);
     }
 }

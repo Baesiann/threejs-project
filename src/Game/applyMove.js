@@ -11,6 +11,7 @@
 import { Piece } from "./Piece";
 
 function applyMove(state, move) {
+    // console.log("move: ", move);
     // if it is castling, two pieces will move
     // king will move anyways at end
     if (move.isCastle) {
@@ -43,7 +44,7 @@ function applyMove(state, move) {
 
     // set enpassant square
     if(move.epsnt !== false) {
-        state.en_passantable = move.epsnt;
+        state.en_passantable = move.espnt;
     } else {
         // has to be set back to false so ep doens't exist for consecutive moves
         state.en_passantable = false;
