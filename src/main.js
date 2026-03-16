@@ -1,7 +1,7 @@
 import { World } from './World/World.js';
-
-// Debugging
-import { Board } from "./Game/Board.js";
+import { GameController } from './Controller/GameController.js';
+import { State } from './Game/State.js';
+import { loadFromFen } from './Game/loadFromFen.js';
 
 // create the main function
 async function main() {
@@ -17,9 +17,21 @@ async function main() {
     // Render the scene
     world.start();
 
-    // Debugging
-    const board = new Board();
-    board.init();
+    // Game implementation
+    // initialize position
+    const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const {board: board,
+        colorToMove: color,
+        castling: castling,
+        en_passantable: en_passantable,
+        halfmove: halfmove,
+        fullmove: fullmove} = loadFromFen(startPos);
+    
+    const engine = new State(board, color, castling, en_passantable, halfmove, fullmove);
+    engine.updateMoves();
+    
+    const game = new GameController(engine, world);
+    world.updateBoard(engine);
 }
 
 // calling main starts the app

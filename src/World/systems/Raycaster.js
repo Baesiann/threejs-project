@@ -59,20 +59,12 @@ class createRaycaster {
         );
 
         if (found.length > 0) {
-            console.log(found[0]);
-
             let clickedObject = found[0];
-
-            if (clickedObject) {
-                window.dispatchEvent(new CustomEvent('game:objectClicked', {
-                    detail: clickedObject.userData
-                }));
-            }
 
             // iterate through intersections
             for (let i = 0; i < found.length; i++) {
                 let current = found[i].object;
-                console.log("found in raycaster index ", i, found[i].object.userData);
+                // console.log("found in raycaster index ", i, found[i].object.userData);
 
                 // Walk up the tree for this hit
                 let count = 0;

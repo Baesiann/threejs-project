@@ -1,7 +1,7 @@
 // helper to add pieces to the scene
 // default parameter needed for knight
 // offset in squares: 1.08
-import { Color, MeshPhysicalMaterial } from "three";
+import { Color, MeshPhysicalMaterial, Group } from "three";
 
 // aesthetics
 // https://stackoverflow.com/questions/63663984/how-can-i-add-color-or-texture-to-a-model-i-load-from-a-glb-file
@@ -19,7 +19,7 @@ var whiteMat = new MeshPhysicalMaterial();
     whiteMat.roughness = 0.5;
 
 
-function drawPiece(scene, raycaster, pieceSource, square, state, rotate=false) {
+function drawPiece(group, raycaster, pieceSource, square, state, rotate=false) {
     // clone the piece to be used
     const piece = pieceSource.clone();
 
@@ -53,14 +53,15 @@ function drawPiece(scene, raycaster, pieceSource, square, state, rotate=false) {
         piece.rotation.y = Math.PI;
     }
 
-    scene.add(piece);
+    group.add(piece);
     raycaster.add(piece);
 
     // console.log(piece.userData);
     piece.userData = {
         square: square,
         piece: state.Squares[square],
-        moves: state.getLegalMoves(square)
+        moves: state.getLegalMoves(square),
+        type: 'piece'
     };
 
     // console.log(piece);

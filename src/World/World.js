@@ -11,6 +11,7 @@ import { Loop } from './systems/Loop.js';
 
 import { drawPiece } from './helpers/drawPiece.js';
 import { drawLegalMoves } from './helpers/drawLegalMoves.js';
+import { Group } from 'three';
 
 // These variables are module-scoped
 // They cannot be accessed from outside the module
@@ -69,6 +70,10 @@ class World {
         this.whiteQueen = whiteQueen;
         this.whiteKing = whiteKing;
 
+        this.pieceGroup = new Group();
+        this.pieceGroup.name = 'Pieces';
+        scene.add(this.pieceGroup);
+
         this.board.traverse((child) => {
             if (child.isMesh) {
                 child.receiveShadow = true;
@@ -81,53 +86,50 @@ class World {
     }
 
     updateBoard(state) {
-        // draw each piece to the board
-        for (let i = 0; i < state.Squares.length; i++) {
-            switch(state.Squares[i]) {
-                case 0:
-                    break;
-                case 18:
-                    drawPiece(scene, raycaster, this.blackPawn, i, state);
-                    break;
-                case 21:
-                    drawPiece(scene, raycaster, this.blackRook, i, state);
-                    break;
-                case 19:
-                    drawPiece(scene, raycaster, this.blackKnight, i, state, true);
-                    break;
-                case 20:
-                    drawPiece(scene, raycaster, this.blackBishop, i, state);
-                    break;
-                case 22:
-                    drawPiece(scene, raycaster, this.blackQueen, i, state);
-                    break;
-                case 17:
-                    drawPiece(scene, raycaster, this.blackKing, i, state);
-                    break;
-                case 10:
-                    drawPiece(scene, raycaster, this.whitePawn, i, state);
-                    break;
-                case 13:
-                    drawPiece(scene, raycaster, this.whiteRook, i, state);
-                    break;
-                case 11:
-                    drawPiece(scene, raycaster, this.whiteKnight, i, state);
-                    break;
-                case 12:
-                    drawPiece(scene, raycaster, this.whiteBishop, i, state);
-                    break;
-                case 14:
-                    drawPiece(scene, raycaster, this.whiteQueen, i, state);
-                    break;
-                case 9:
-                    drawPiece(scene, raycaster, this.whiteKing, i, state);
-                    break;
-            }
+        // console.log("updating with state: ", state);
+        // clear all existing pieces
+        while(this.pieceGroup.children.length > 0) { 
+            this.pieceGroup.remove(this.pieceGroup.children[0]); 
         }
+
+        // int to model conversion
+        const pieceDict = {
+            18: this.blackPawn,
+            21: this.blackRook,
+            19: this.blackKnight,
+            20: this.blackBishop,
+            22: this.blackQueen,
+            17: this.blackKing,
+            10: this.whitePawn,
+            13: this.whiteRook,
+            11: this.whiteKnight,
+            12: this.whiteBishop, 
+            14: this.whiteQueen,
+            9: this.whiteKing
+        };
+
+        // draw each piece to the group
+        state.Squares.forEach((pieceValue, i) => {
+            if (pieceValue !== 0) {
+                const model = pieceDict[pieceValue];
+                if (model) {
+                    drawPiece(this.pieceGroup, raycaster, model, i, state);
+                }
+            }
+        });
     }
 
     highlightSquares(moves) {
         // idk man put a red square where things can go
+        // clear board from previous legal moves
+        // console.log(scene.children);
+        for (let i = scene.children.length - 1; i >= 0; i--) {
+            if (scene.children[i].userData.name === 'indicator') {
+                // console.log(scene.children[i]);
+                scene.children[i].removeFromParent();
+                // console.log("child length", scene.children.length);
+            }
+        }
         // console.log(moves);
         for (let i = 0; i < moves.length; i++) {
             // console.log(moves[i]);

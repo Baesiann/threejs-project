@@ -1,6 +1,9 @@
 // Purpose of this file is to store and update game state
 // A state object should be passed in and returned to various functions
 
+import { generateMoves } from "./pieceMoves/moveGenerator";
+import { validateMoves } from "./pieceMoves/validateMoves";
+
 class State {
     constructor(squares, color, castling, en_passantable, halfmove, fullmove) {
         this.Squares = squares;
@@ -9,6 +12,11 @@ class State {
         this.en_passantable = en_passantable;
         this.halfmove = halfmove;
         this.fullmove = fullmove;
+        this.moves;
+    }
+
+    updateMoves() {
+        this.moves = validateMoves(this, generateMoves(this));
     }
 
     makeMove(from, to) {
@@ -16,6 +24,10 @@ class State {
         this.Squares[from] = 0;
 
         return State;
+    }
+
+    getLegalMoves(square) {
+        return this.moves.filter(m => m.from === square);
     }
 
     clone() {

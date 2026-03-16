@@ -25,7 +25,7 @@ function drawLegalMoves(scene, raycaster, square) {
     // add properties to the indicator
     indicator.userData = {
         square: square,
-        name: "NAME DAMMIT"
+        name: "indicator"
     };
 
     // console.log(indicator);

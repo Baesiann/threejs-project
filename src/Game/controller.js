@@ -18,14 +18,13 @@ function controller() {
         fullmove: fullmove} = loadFromFen(startPos);
 
     const Game = new State(board, color, castling, en_passantable, halfmove, fullmove);
-    const legalMoves = validateMoves(Game, generateMoves(Game));
+    Game.moves = validateMoves(Game, generateMoves(Game));
 
     console.log(Game.clone());
-    applyMove(Game, legalMoves[2]);
+    applyMove(Game, Game.moves[2]);
     console.log(Game.clone());
+    console.log(Game.getLegalMoves(1));
 
-    // console.log(generateMoves(Game));
-    // console.log(legalMoves);
     return Game;
 }
 
