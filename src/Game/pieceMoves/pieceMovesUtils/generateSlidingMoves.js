@@ -29,7 +29,11 @@ function generateSlidingMoves (state, index) {
             // otherwise, add the move
             moves.push({
                 from: index,
-                to: targetIndex
+                to: targetIndex,
+                piece: state.Squares[index],
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: false
             });
 
             // if there is an enemy on the last move, break loop

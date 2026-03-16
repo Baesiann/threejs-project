@@ -13,7 +13,11 @@ function pawnMoves(state, index) {
     if (state.Squares[index + (8 * pawnDir)] == 0) {
         moves.push({
             from: index,
-            to: index + (8 * pawnDir)
+            to: index + (8 * pawnDir),
+            piece: Piece.Pawn,
+            epsnt: false,
+            enpassantCapture: false,
+            isCastle: false
         });
     }
 
@@ -26,8 +30,16 @@ function pawnMoves(state, index) {
     if (state.Squares[index + (16 * pawnDir)] === 0 && row === startRow) {
         moves.push({
             from: index,
-            to: index + (16 * pawnDir)
+            to: index + (16 * pawnDir),
+            piece: Piece.Pawn,
+            espnt: index + (pawnDir * 8),
+            enpassantCapture: false,
+            isCastle: false
         });
+        // console.log("index start: ", index);
+        // console.log("epst square: ", index + (pawnDir * 8));
+        // console.log("index of pawn: ", index + (16 * pawnDir));
+        // console.log(pawnDir);
     }
 
     // check if an enemy piece sits on the diagonal     NEW: or enpassantable
@@ -39,8 +51,26 @@ function pawnMoves(state, index) {
             let targetCol = target % 8;
             // Ensure the capture is exactly 1 column away
             if (Math.abs(targetCol - (index % 8)) === 1) {
-                if (target === state.en_passantable || whoIs(state, target) === -1) {
-                    moves.push({ from: index, to: target });
+                if (whoIs(state, target) === -1) {
+                    moves.push({
+                        from: index,
+                        to: target,
+                        piece: Piece.Pawn,
+                        espnt: false,
+                        enpassantCapture: false,
+                        isCastle: false
+                    });
+                }
+                // trigger enpassantCapture
+                if (target === state.en_passantable) {
+                    moves.push({
+                        from: index,
+                        to: target,
+                        piece: Piece.Pawn,
+                        espnt: false,
+                        enpassantCapture: true,
+                        isCastle: false
+                    });
                 }
             }
         }
@@ -69,7 +99,11 @@ function knightMoves(state, index) {
                 if (whoIs(state, index + offsets[i]) !== 1) {
                     moves.push({
                         from: index,
-                        to: index + offsets[i]
+                        to: index + offsets[i],
+                        piece: Piece.Knight,
+                        espnt: false,
+                        enpassantCapture: false,
+                        isCastle: false
                     });
                 }
             }
@@ -98,12 +132,63 @@ function kingMoves(state, index) {
                 if (whoIs(state, index + offsets[i]) !== 1) {
                     moves.push({
                         from: index,
-                        to: index + offsets[i]
+                        to: index + offsets[i],
+                        piece: Piece.King,
+                        espnt: false,
+                        enpassantCapture: false,
+                        isCastle: true
                     });
                 }
             }
         }
     }
+
+    // allow the king to castle if available
+    if (state.colorToMove === Piece.White) {
+        if ((state.castling.White_Kingside) && (index - 1 === 0) && (index - 2 === 0)) {
+            moves.push({
+                from: index,
+                to: index - 2,
+                piece: Piece.King,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: true
+            });
+        }
+        if ((state.castling.White_Queenside) && (index + 1 === 0) && (index + 2 === 0) && (index + 3 === 0)) {
+            moves.push({
+                from: index,
+                to: index + 3,
+                piece: Piece.King,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: true
+            });
+        }
+    }
+    if (state.colorToMove === Piece.Black) {
+        if ((state.castling.Black_Kingside) && (index - 1 === 0) && (index - 2 === 0)) {
+            moves.push({
+                from: index,
+                to: index - 2,
+                piece: Piece.King,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: true
+            });
+        }
+        if ((state.castling.Black_Queenside) && (index + 1 === 0) && (index + 2 === 0) && (index + 3 === 0)) {
+            moves.push({
+                from: index,
+                to: index + 3,
+                piece: Piece.King,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: true
+            });
+        }
+    }
+    //console.log(state.castling);
 
     return moves;
 }

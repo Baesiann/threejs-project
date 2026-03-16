@@ -3,6 +3,7 @@ import { State } from "./State.js";
 import { loadFromFen } from "./loadFromFen.js";
 import { generateMoves } from "./pieceMoves/moveGenerator.js";
 import { validateMoves } from "./pieceMoves/validateMoves.js";
+import { applyMove } from "./applyMove.js";
 
 function controller() {
     const startPos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -19,10 +20,12 @@ function controller() {
     const Game = new State(board, color, castling, en_passantable, halfmove, fullmove);
     const legalMoves = validateMoves(Game, generateMoves(Game));
 
-    //console.log(generateMoves(Game));
+    console.log(Game.clone());
+    applyMove(Game, legalMoves[2]);
+    console.log(Game.clone());
 
-    console.log(generateMoves(Game));
-    console.log(legalMoves);
+    // console.log(generateMoves(Game));
+    // console.log(legalMoves);
     return Game;
 }
 
