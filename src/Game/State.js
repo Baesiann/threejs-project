@@ -13,10 +13,14 @@ class State {
         this.halfmove = halfmove;
         this.fullmove = fullmove;
         this.moves;
+        this.isCheck;
     }
 
     updateMoves() {
         this.moves = validateMoves(this, generateMoves(this));
+        if (this.moves.length === 0) {
+            console.log("CHECKMATTTEEEEE");
+        }
     }
 
     makeMove(from, to) {

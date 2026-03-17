@@ -55,7 +55,7 @@ class GameController {
         this.world.highlightSquares([]);
         
         // get the full move
-        console.log(this.state.moves);
+        // console.log(this.state.moves);
         for (let i = 0; i < this.state.moves.length; i++) {
             if (this.state.moves[i].from === this.selectedPiece) {
                 if (this.state.moves[i].to === userData.square) {
@@ -72,9 +72,12 @@ class GameController {
 
         applyMove(this.state, move);
 
-        this.state.updateMoves();
+        // Dispatch an event that a move was made
+        window.dispatchEvent(new CustomEvent('moveMade', {
+            detail: this.state.colorToMove
+        }));
 
-        console.log(this.state);
+        this.state.updateMoves();
 
         this.world.updateBoard(this.state);
     }
