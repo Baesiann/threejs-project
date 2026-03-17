@@ -136,7 +136,7 @@ function kingMoves(state, index) {
                         piece: Piece.King,
                         espnt: false,
                         enpassantCapture: false,
-                        isCastle: true
+                        isCastle: false
                     });
                 }
             }
@@ -145,20 +145,20 @@ function kingMoves(state, index) {
 
     // allow the king to castle if available
     if (state.colorToMove === Piece.White) {
-        if ((state.castling.White_Kingside) && (index - 1 === 0) && (index - 2 === 0)) {
+        if ((state.castling.White_Kingside) && (state.Squares[index + 1] === 0) && (state.Squares[index + 2] === 0)) {
             moves.push({
                 from: index,
-                to: index - 2,
+                to: index + 2,
                 piece: Piece.King,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: true
             });
         }
-        if ((state.castling.White_Queenside) && (index + 1 === 0) && (index + 2 === 0) && (index + 3 === 0)) {
+        if ((state.castling.White_Queenside) && (state.Squares[index - 1] === 0) && (state.Squares[index - 2] === 0) && (state.Squares[index - 3] === 0)) {
             moves.push({
                 from: index,
-                to: index + 3,
+                to: index - 2,
                 piece: Piece.King,
                 espnt: false,
                 enpassantCapture: false,
@@ -167,20 +167,20 @@ function kingMoves(state, index) {
         }
     }
     if (state.colorToMove === Piece.Black) {
-        if ((state.castling.Black_Kingside) && (index - 1 === 0) && (index - 2 === 0)) {
+        if ((state.castling.Black_Kingside) && (state.Squares[index + 1] === 0) && (state.Squares[index + 2] === 0)) {
             moves.push({
                 from: index,
-                to: index - 2,
+                to: index + 2,
                 piece: Piece.King,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: true
             });
         }
-        if ((state.castling.Black_Queenside) && (index + 1 === 0) && (index + 2 === 0) && (index + 3 === 0)) {
+        if ((state.castling.Black_Queenside) && (state.Squares[index - 1] === 0) && (state.Squares[index - 2] === 0) && (state.Squares[index - 3] === 0)) {
             moves.push({
                 from: index,
-                to: index + 3,
+                to: index - 2,
                 piece: Piece.King,
                 espnt: false,
                 enpassantCapture: false,

@@ -16,13 +16,29 @@ function applyMove(state, move) {
     // king will move anyways at end
     if (move.isCastle) {
         // Rook move if white kingside
-        if (move.to === 6) { state.makeMove(7, 5); }
+        if (move.to === 6) { 
+            state.makeMove(7, 5);
+            state.castling.White_Kingside = false;
+            state.castling.White_Queenside = false;
+        }
         // Rook move if white queenside
-        if (move.to === 2) { state.makeMove(0, 3); }
+        if (move.to === 2) {
+            state.makeMove(0, 3);
+            state.castling.White_Kingside = false;
+            state.castling.White_Queenside = false;
+        }
         // Rook move if black kingside
-        if (move.to === 62) { state.makeMove(63, 61); }
+        if (move.to === 62) {
+            state.makeMove(63, 61);
+            state.castling.Black_Kingside = false;
+            state.castling.Black_Queenside = false;
+        }
         // Rook move if black queenside
-        if (move.to === 58) { state.makeMove(56, 59); }
+        if (move.to === 58) {
+            state.makeMove(56, 59);
+            state.castling.Black_Kingside = false;
+            state.castling.Black_Queenside = false;
+        }
     }
 
     // opponnent pawn capture on enpassant
@@ -51,6 +67,14 @@ function applyMove(state, move) {
     }
 
     // update castling (these will never go back to true)
+    if (move.from === 4) {
+        state.castling.White_Kingside = false;
+        state.castling.White_Queenside = false;
+    }
+    if (move.from === 60) {
+        state.castling.Black_Kingside = false;
+        state.castling.Black_Queenside = false;
+    }
     if (move.from === 0) {state.castling.White_Queenside = false}
     if (move.from === 7) {state.castling.White_Kingside = false}
     if (move.from === 56) {state.castling.Black_Queenside = false}

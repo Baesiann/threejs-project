@@ -22,12 +22,12 @@ class GameController {
     }
 
     updateBoard() {
-        console.log(this.State);
+        // console.log(this.State);
         this.world.updateBoard(this.state);
     }
 
     selectPiece(userData) {
-        console.log("PIECE USER DATA: ", userData);
+        // console.log("PIECE USER DATA: ", userData);
         // Highlight legal moves when user clicks piece
 
         // Highlight legal moves if it's piece's color to move
@@ -39,7 +39,7 @@ class GameController {
         } else {
             // Check if the piece is capturable
             for (let i = 0; i < this.state.moves.length; i++) {
-                console.log(userData.square);
+                // console.log(userData.square);
                 if (userData.square === this.state.moves[i].to) {
                     if (this.selectedPiece === this.state.moves[i].from) {
                         this.selectIndicator(userData);
@@ -51,7 +51,7 @@ class GameController {
     }
 
     selectIndicator(userData) {
-        console.log("INDICATOR USER DATA: ", userData);
+        // console.log("INDICATOR USER DATA: ", userData);
         this.world.highlightSquares([]);
         
         // get the full move
