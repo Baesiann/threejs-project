@@ -17,25 +17,53 @@ function applyMove(state, move) {
     if (move.isCastle) {
         // Rook move if white kingside
         if (move.to === 6) { 
-            state.makeMove(7, 5);
+            state.makeMove({
+                from: 7,
+                to: 5,
+                piece: Piece.Rook,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: false
+            });
             state.castling.White_Kingside = false;
             state.castling.White_Queenside = false;
         }
         // Rook move if white queenside
         if (move.to === 2) {
-            state.makeMove(0, 3);
+            state.makeMove({
+                from: 0,
+                to: 3,
+                piece: Piece.Rook,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: false
+            });
             state.castling.White_Kingside = false;
             state.castling.White_Queenside = false;
         }
         // Rook move if black kingside
         if (move.to === 62) {
-            state.makeMove(63, 61);
+            state.makeMove({
+                from: 63,
+                to: 61,
+                piece: Piece.Rook,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: false
+            });
             state.castling.Black_Kingside = false;
             state.castling.Black_Queenside = false;
         }
         // Rook move if black queenside
         if (move.to === 58) {
-            state.makeMove(56, 59);
+            state.makeMove({
+                from: 56,
+                to: 59,
+                piece: Piece.Rook,
+                espnt: false,
+                enpassantCapture: false,
+                isCastle: false
+            });
             state.castling.Black_Kingside = false;
             state.castling.Black_Queenside = false;
         }
@@ -49,8 +77,27 @@ function applyMove(state, move) {
         state.Squares[move.to - (8 * pawnDir)] = 0;
     }
 
-    // apply the update to the squares
-    state.makeMove(move.from, move.to);
+    // promotion handling
+    console.log(move.piece | state.colorToMove);
+    if ((move.piece | state.colorToMove) === 10) {
+        // White promotion
+        if (move.to >= 56) {
+            // Trigger promotion condition
+            state.pendPromotion = Piece.White;
+            console.log("promo time");
+        }
+    }
+    if ((move.piece | state.colorToMove) === 18) {
+        // Black promotion
+        if (move.to <= 7) {
+            // Trigger promotion condition
+            state.pendPromotion = Piece.Black;
+        }
+    }
+
+    // Moved to GameController movePiece()
+    // // apply the update to the squares
+    // state.makeMove(move.from, move.to);
 
     // increment halfmove
     state.halfmove++;

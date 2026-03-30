@@ -37,14 +37,15 @@ function createControls(camera, canvas) {
     // Listens for the moveMade event
     window.addEventListener("moveMade", (event) => {
         const colorToMove = event.detail;
-
-        if (colorToMove === 16) {
-            // console.log("black to move");
-            controls.rotateCameraToBlack();
-        } else {
-            // console.log("white to move");
-            controls.rotateCameraToWhite();
-        }
+        setTimeout(() => {
+            if (colorToMove === 16) {
+                // console.log("black to move");
+                controls.rotateCameraToBlack();
+            } else {
+                // console.log("white to move");
+                controls.rotateCameraToWhite();
+            }
+        }, 200);
     });
 
     // https://en.wikipedia.org/wiki/Spherical_coordinate_system
@@ -74,7 +75,7 @@ function createControls(camera, canvas) {
             const diff = shortestAngleDiff(angle, targetRotation);
 
             // lerp
-            const step = diff * 0.1;
+            const step = diff * 0.05;
 
             camera.position.x = radius * Math.sin(angle + step);
             camera.position.z = radius * Math.cos(angle + step);

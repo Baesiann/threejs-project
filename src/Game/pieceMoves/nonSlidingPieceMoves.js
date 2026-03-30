@@ -75,7 +75,7 @@ function pawnMoves(state, index) {
             }
         }
     }
-
+    
     return moves;
 }
 

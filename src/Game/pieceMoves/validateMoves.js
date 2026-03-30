@@ -32,8 +32,9 @@ function validateMoves(state, moves) {
             // Make the move, check destination
             if (!isIllegal) {
                 let tempState = state.clone();
-                tempState.makeMove(move.from, move.to);
-                const kingPos = tempState.Squares.indexOf(tempState.colorToMove + Piece.King);
+                tempState.makeMove(move);
+                const movingColor = tempState.colorToMove;
+                const kingPos = tempState.Squares.indexOf(movingColor + Piece.King);
 
                 // Generate opponent responses
                 tempState.colorToMove = (tempState.colorToMove === Piece.White) ? Piece.Black : Piece.White; 

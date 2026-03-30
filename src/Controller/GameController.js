@@ -1,4 +1,5 @@
 import { applyMove } from "../Game/applyMove";
+import { Piece } from "../Game/Piece";
 
 class GameController {
     constructor(enginerState, world) {
@@ -7,6 +8,7 @@ class GameController {
 
         this.selectedPiece;
         this.moveHist = [];
+        this.flipper = false;
 
         // listens to Raycaster.onClick();
         // Click returns userData
@@ -72,10 +74,27 @@ class GameController {
 
         applyMove(this.state, move);
 
-        // Dispatch an event that a move was made
-        window.dispatchEvent(new CustomEvent('moveMade', {
-            detail: this.state.colorToMove
-        }));
+        if(this.state.pendPromotion === Piece.White) {
+            console.log("PROMOTIONNNN");
+            this.world.triggerPromotion(Piece.White);
+            move.Piece = 14;
+            console.log(move);
+        }
+
+        if(this.state.pendPromotion === Piece.Black) {
+            console.log("BLACK PROMOOOOO");
+            this.world.triggerPromotion(Piece.Black)
+        }
+
+        // apply update to squares here: promotion handling
+        this.state.makeMove(move);
+
+        if (this.flipper) {
+            // Dispatch an event that a move was made
+            window.dispatchEvent(new CustomEvent('moveMade', {
+                detail: this.state.colorToMove
+            }));
+        }
 
         this.state.updateMoves();
 

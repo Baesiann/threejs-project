@@ -3,6 +3,7 @@
 
 import { generateMoves } from "./pieceMoves/moveGenerator";
 import { validateMoves } from "./pieceMoves/validateMoves";
+import { Piece } from "./Piece";
 
 class State {
     constructor(squares, color, castling, en_passantable, halfmove, fullmove) {
@@ -14,6 +15,8 @@ class State {
         this.fullmove = fullmove;
         this.moves;
         this.isCheck;
+        // Promotion handling
+        this.pendPromotion = false;
     }
 
     updateMoves() {
@@ -23,9 +26,19 @@ class State {
         }
     }
 
-    makeMove(from, to) {
-        this.Squares[to] = this.Squares[from];
-        this.Squares[from] = 0;
+    makeMove(move) {
+        let toPiece = this.Squares[move.from];
+
+        if (this.pendPromotion === Piece.White) {
+            toPiece = Piece.White | Piece.Queen;
+            this.pendPromotion = false;
+        }
+        if (this.pendPromotion === Piece.Black) {
+            toPiece = Piece.Black | Piece.Queen;
+            this.pendPromotion = false;
+        }
+        this.Squares[move.to] = toPiece;
+        this.Squares[move.from] = 0;
 
         return State;
     }

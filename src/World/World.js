@@ -138,6 +138,13 @@ class World {
         }
     }
 
+    triggerPromotion(color) {
+        // Disable ability to click on other pieces
+        // Store current interactables
+        var tempStorage = raycaster.interactable;
+        
+    }
+
     render() {
         // draw a single frame
         renderer.render(scene, camera);
