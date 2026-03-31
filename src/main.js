@@ -30,8 +30,13 @@ async function main() {
     const engine = new State(board, color, castling, en_passantable, halfmove, fullmove);
     engine.updateMoves();
     
-    const game = new GameController(engine, world);
+    const game = new GameController(engine, world, {
+        white: 'ai',
+        black: 'ai'
+    });
     world.updateBoard(engine);
+
+    game.start();
 }
 
 // calling main starts the app

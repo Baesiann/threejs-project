@@ -17,25 +17,35 @@ class State {
         this.isCheck;
         // Promotion handling
         this.pendPromotion = 0;
+        this.gameover = false;
     }
 
     updateMoves() {
         this.moves = validateMoves(this, generateMoves(this));
         if (this.moves.length === 0) {
-            console.log("CHECKMATTTEEEEE");
+            this.gameover = this.isCheck ? "checkmate" : "stalemate";
         }
+        return this.moves;
     }
 
     makeMove(move) {
+        if (!move) {
+            console.error("State.makeMove received undefined move!");
+            return;
+        }
+        
         let toPiece = move.piece || this.Squares[move.from];
+
+        if (toPiece === 0) {
+            console.error(`State: No piece found at square ${move.from}!`);
+            return;
+        }
 
         this.Squares[move.to] = toPiece;
         this.Squares[move.from] = 0;
 
         // reset promotion
         this.pendPromotion = 0;
-
-        return this;
     }
 
     getLegalMoves(square) {

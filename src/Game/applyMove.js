@@ -11,9 +11,14 @@
 import { Piece } from "./Piece";
 
 function applyMove(state, move) {
+    if (!move === null) {
+        return console.log("bad");
+    }
     // console.log("move: ", move);
     // if it is castling, two pieces will move
     // king will move anyways at end
+    // console.log(move);
+    // console.log(move.isCastle);
     if (move.isCastle) {
         // Rook move if white kingside
         if (move.to === 6) { 
@@ -78,7 +83,7 @@ function applyMove(state, move) {
     }
 
     // promotion handling
-    // console.log(move.piece | state.colorToMove);
+    console.log(move.piece || state.Squares[move.from]);
     if ((move.piece | state.colorToMove) === 10) {
         // White promotion
         if (move.to >= 56) {

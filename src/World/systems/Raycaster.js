@@ -20,6 +20,10 @@ class createRaycaster {
     }
 
     remove(object) {
+        if (!this.interactable || !object) {
+            this.interactable = [];     // more safety
+            return;  // safety
+        }
         const index = this.interactable.indexOf(object);
         if (index > -1) {
             this.interactable.splice(index, 1);

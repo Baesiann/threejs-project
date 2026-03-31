@@ -176,8 +176,12 @@ class World {
         while(this.epGroup.children.length > 0) {
             this.epGroup.remove(this.epGroup.children[0]);
         }
+        // Ensure raycaster
+        if (!this.raycaster) return;
+
         // Restore the board pieces to the raycaster
-        raycaster.interactable = this.savedInteractables;
+        this.raycaster.interactable = this.savedInteractables || [];
+        this.savedInteractables = null;
     }
 
     render() {

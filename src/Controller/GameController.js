@@ -1,8 +1,9 @@
 import { applyMove } from "../Game/applyMove";
 import { Piece } from "../Game/Piece";
+import { ChessAI } from "../Game/Engine/ChessAI";
 
 class GameController {
-    constructor(enginerState, world) {
+    constructor(enginerState, world, options = {}) {
         this.state = enginerState;
         this.world = world;
 
@@ -10,18 +11,29 @@ class GameController {
         this.moveHist = [];
         this.flipper = false;
 
+        this.ai = new ChessAI(this.state);
+
+        this.players = {
+            [Piece.White]: options.white || 'human',
+            [Piece.Black]: options.black || 'human'
+        };
+
+        this.isAiThinking = false;
+
         // listens to Raycaster.onClick();
         // Click returns userData
+        // add condition to listen only if human turn
         window.addEventListener('game:objectClicked', (e) => {
-            // console.log(e.detail);
-            if (e.detail.piece) {
-                this.selectPiece(e.detail);
-            } else if (e.detail.name === 'indicator') {
-                this.selectIndicator(e.detail);
-            } else if (e.detail.promotionType) {
-                this.finishPromotion(e.detail.promotionType);
+            if (this.players[this.state.colorToMove] === 'human') {
+                // console.log(e.detail);
+                if (e.detail.piece) {
+                    this.selectPiece(e.detail);
+                } else if (e.detail.name === 'indicator') {
+                    this.selectIndicator(e.detail);
+                } else if (e.detail.promotionType) {
+                    this.finishPromotion(e.detail.promotionType);
+                }
             }
-            
         });
     }
 
@@ -72,26 +84,44 @@ class GameController {
 
     // handles promotion selection
     finishPromotion(pieceType) {
-        if (this.pendingMove) {
+        // only called when human promotes
+        const moveInProgress = this.pendingMove;
+
+        if (moveInProgress) {
             // update move
-            this.pendingMove.piece = pieceType;
+            this.moveInProgress.piece = pieceType;
             // console.log(this.pendingMove);
             // world needs to clear promotion UI and restore clicks
             this.world.clearPromotionUI();
             // finalize the move
-            this.finalizeMove(this.pendingMove);
+            this.pendingMove = null;
+            this.finalizeMove(moveInProgress);
         }
     }
 
+    // Handle ai promotion bug
+    executeAiPromotion(move, pieceType) {
+        // Manually attach the piece and finalize
+        move.piece = pieceType;
+        this.finalizeMove(move);
+    }
+
     movePiece(move) {
+        if (!move) return;
+
+        this.pendingMove = move;
         applyMove(this.state, move);
 
         // Check for promotion
         if (this.state.pendPromotion !== 0) {
-            // save the current move to finish later
-            this.pendingMove = move;
-            this.world.triggerPromotion(this.state.pendPromotion);
-            return
+            if (this.players[this.state.colorToMove] === 'ai') {
+                // AI autoqueens
+                const promoPiece = (this.state.pendPromotion === Piece.White) ? 14 : 22;
+                this.executeAiPromotion(move, promoPiece);
+            } else {
+                this.world.triggerPromotion(this.state.pendPromotion);
+            }
+            return;
         }
 
         // Normal move
@@ -116,6 +146,51 @@ class GameController {
         this.world.updateBoard(this.state);
         this.pendingMove = null;
         this.selectedPiece = null;
+
+        // safety reset
+        this.isAiThinking = false;
+
+        // Check the turn after everything updates
+        this.checkNextTurn();
+    }
+
+    // check if human turn
+    checkNextTurn() {
+        const color = this.state.colorToMove;
+        const type = this.players[color];
+        const moveCount = this.state.moves ? this.state.moves.length : 0;
+        console.log(`Turn: ${color}, Type: ${type}, Moves available: ${moveCount}`);
+        if (this.state.gameover) {
+            console.log("PROPER GAMEOVER");
+            return 0;
+        }
+        const nextPlayerType = this.players[this.state.colorToMove];
+
+        if (nextPlayerType === 'ai' && !this.isAiThinking) {
+            if (moveCount === 0) {
+                console.warn("GAME OVER or ERROR: No moves found for AI.");
+                return;
+            }
+            this.isAiThinking = true;
+
+            // Give it time
+            setTimeout(() => {
+                this.makeAiMove();
+            }, 500);
+        }
+    }
+
+    start() {
+        this.checkNextTurn();
+    }
+
+    makeAiMove() {
+        const aiMove = this.ai.getRandomMove(this.state);
+        console.log("AI Plays: ", aiMove);
+
+        this.isAiThinking = false;
+
+        this.movePiece(aiMove);
     }
 
 }
