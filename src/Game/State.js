@@ -48,6 +48,13 @@ class State {
         this.pendPromotion = 0;
     }
 
+    unmakeMove(move, captured) {
+        this.Squares[move.from] = this.Squares[move.to];
+        this.Squares[move.to] = captured;
+
+        this.pendPromotion = 0;
+    }
+
     getLegalMoves(square) {
         return this.moves.filter(m => m.from === square);
     }

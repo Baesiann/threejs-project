@@ -83,7 +83,7 @@ function applyMove(state, move) {
     }
 
     // promotion handling
-    console.log(move.piece || state.Squares[move.from]);
+    // console.log(move.piece || state.Squares[move.from]);
     if ((move.piece | state.colorToMove) === 10) {
         // White promotion
         if (move.to >= 56) {

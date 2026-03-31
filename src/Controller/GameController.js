@@ -159,7 +159,7 @@ class GameController {
         const color = this.state.colorToMove;
         const type = this.players[color];
         const moveCount = this.state.moves ? this.state.moves.length : 0;
-        console.log(`Turn: ${color}, Type: ${type}, Moves available: ${moveCount}`);
+        // console.log(`Turn: ${color}, Type: ${type}, Moves available: ${moveCount}`);
         if (this.state.gameover) {
             console.log("PROPER GAMEOVER");
             return 0;
@@ -176,7 +176,7 @@ class GameController {
             // Give it time
             setTimeout(() => {
                 this.makeAiMove();
-            }, 500);
+            }, 4000);
         }
     }
 
@@ -185,7 +185,7 @@ class GameController {
     }
 
     makeAiMove() {
-        const aiMove = this.ai.getRandomMove(this.state);
+        const aiMove = this.ai.getBestMove(this.state);
         console.log("AI Plays: ", aiMove);
 
         this.isAiThinking = false;
