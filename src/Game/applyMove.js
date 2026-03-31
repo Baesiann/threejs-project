@@ -22,53 +22,61 @@ function applyMove(state, move) {
     if (move.isCastle) {
         // Rook move if white kingside
         if (move.to === 6) { 
-            state.makeMove({
-                from: 7,
-                to: 5,
-                piece: Piece.Rook | state.colorToMove,
-                espnt: false,
-                enpassantCapture: false,
-                isCastle: false
-            });
+            state.Squares[5] = Piece.Rook | state.colorToMove;
+            state.Squares[7] = 0;
+            // state.makeMove({
+            //     from: 7,
+            //     to: 5,
+            //     piece: Piece.Rook | state.colorToMove,
+            //     espnt: false,
+            //     enpassantCapture: false,
+            //     isCastle: false
+            // });
             state.castling.White_Kingside = false;
             state.castling.White_Queenside = false;
         }
         // Rook move if white queenside
         if (move.to === 2) {
-            state.makeMove({
-                from: 0,
-                to: 3,
-                piece: Piece.Rook | state.colorToMove,
-                espnt: false,
-                enpassantCapture: false,
-                isCastle: false
-            });
+            state.Squares[3] = Piece.Rook | state.colorToMove;
+            state.Squares[0] = 0;
+            // state.makeMove({
+            //     from: 0,
+            //     to: 3,
+            //     piece: Piece.Rook | state.colorToMove,
+            //     espnt: false,
+            //     enpassantCapture: false,
+            //     isCastle: false
+            // });
             state.castling.White_Kingside = false;
             state.castling.White_Queenside = false;
         }
         // Rook move if black kingside
         if (move.to === 62) {
-            state.makeMove({
-                from: 63,
-                to: 61,
-                piece: Piece.Rook | state.colorToMove,
-                espnt: false,
-                enpassantCapture: false,
-                isCastle: false
-            });
+            state.Squares[61] = Piece.Rook | state.colorToMove;
+            state.Squares[63] = 0;
+            // state.makeMove({
+            //     from: 63,
+            //     to: 61,
+            //     piece: Piece.Rook | state.colorToMove,
+            //     espnt: false,
+            //     enpassantCapture: false,
+            //     isCastle: false
+            // });
             state.castling.Black_Kingside = false;
             state.castling.Black_Queenside = false;
         }
         // Rook move if black queenside
         if (move.to === 58) {
-            state.makeMove({
-                from: 56,
-                to: 59,
-                piece: Piece.Rook | state.colorToMove,
-                espnt: false,
-                enpassantCapture: false,
-                isCastle: false
-            });
+            state.Squares[59] = Piece.Rook | state.colorToMove;
+            state.Squares[56] = 0;
+            // state.makeMove({
+            //     from: 56,
+            //     to: 59,
+            //     piece: Piece.Rook | state.colorToMove,
+            //     espnt: false,
+            //     enpassantCapture: false,
+            //     isCastle: false
+            // });
             state.castling.Black_Kingside = false;
             state.castling.Black_Queenside = false;
         }

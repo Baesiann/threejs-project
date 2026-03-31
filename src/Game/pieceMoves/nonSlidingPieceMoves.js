@@ -9,40 +9,41 @@ function pawnMoves(state, index) {
     let pawnDir = 1;
     if (state.colorToMove === Piece.Black) { pawnDir = -1}
 
-    // push front move is square is free
-    if (state.Squares[index + (8 * pawnDir)] == 0) {
-        moves.push({
-            from: index,
-            to: index + (8 * pawnDir),
-            piece: Piece.Pawn | state.colorToMove,
-            epsnt: false,
-            enpassantCapture: false,
-            isCastle: false,
-            originalPiece: state.Squares[index]
-        });
-    }
-
     // check if pawn is on starting rank, if unblocked, can move 2
     let row = Math.floor(index / 8);
     let startRow = 1;
     if (state.colorToMove === Piece.Black) {
         startRow = 6;
     }
-    if (state.Squares[index + (16 * pawnDir)] === 0 && row === startRow) {
+
+    if (state.Squares[index + (8 * pawnDir)] === 0) {
+        // Single move
         moves.push({
             from: index,
-            to: index + (16 * pawnDir),
+            to: index + (8 * pawnDir),
             piece: Piece.Pawn | state.colorToMove,
-            espnt: index + (pawnDir * 8),
+            espnt: false,
             enpassantCapture: false,
             isCastle: false,
             originalPiece: state.Squares[index]
         });
-        // console.log("index start: ", index);
-        // console.log("epst square: ", index + (pawnDir * 8));
-        // console.log("index of pawn: ", index + (16 * pawnDir));
-        // console.log(pawnDir);
+        if (row === startRow && state.Squares[index + (16 * pawnDir)] === 0) {
+            // only add double move if single move is also valid
+            moves.push({
+                from: index,
+                to: index + (16 * pawnDir),
+                piece: Piece.Pawn | state.colorToMove,
+                espnt: index + (pawnDir * 8),
+                enpassantCapture: false,
+                isCastle: false,
+                originalPiece: state.Squares[index]
+            });
+        }
     }
+    // console.log("index start: ", index);
+    // console.log("epst square: ", index + (pawnDir * 8));
+    // console.log("index of pawn: ", index + (16 * pawnDir));
+    // console.log(pawnDir);
 
     // check if an enemy piece sits on the diagonal     NEW: or enpassantable
     // obtain diagonal indexes and check for realm shift
