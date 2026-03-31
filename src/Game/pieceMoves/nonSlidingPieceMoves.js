@@ -74,7 +74,7 @@ function pawnMoves(state, index) {
                 // trigger enpassantCapture
                 // En Passant Capture (never promotes but still good with helper)
                 if (target === state.en_passantable) {
-                    addPawnMove(target, true);
+                    addPawnMove(target, true, true);
                 }
             }
         }

@@ -32,7 +32,7 @@ async function main() {
     
     const game = new GameController(engine, world, {
         white: 'human',
-        black: 'ai'
+        black: 'human'
     });
     world.updateBoard(engine);
 

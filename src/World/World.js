@@ -117,8 +117,8 @@ class World {
         // enpassant handling
         if (move.enpassantCapture) {
             // capture pawn behind
-            const pawnDir = (move.to > move.from) ? -8 : 8;
-            const captureSquare = move.to + pawnDir;
+            const pawnDir = (move.to > move.from) ? 1 : -1;
+            const captureSquare = move.to - (8 * pawnDir);
 
             const epCapture = this.pieceGroup.children.find(
                 child => child.userData && child.userData.square === captureSquare
