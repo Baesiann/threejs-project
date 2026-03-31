@@ -17,7 +17,8 @@ function pawnMoves(state, index) {
             piece: Piece.Pawn | state.colorToMove,
             epsnt: false,
             enpassantCapture: false,
-            isCastle: false
+            isCastle: false,
+            originalPiece: state.Squares[index]
         });
     }
 
@@ -34,7 +35,8 @@ function pawnMoves(state, index) {
             piece: Piece.Pawn | state.colorToMove,
             espnt: index + (pawnDir * 8),
             enpassantCapture: false,
-            isCastle: false
+            isCastle: false,
+            originalPiece: state.Squares[index]
         });
         // console.log("index start: ", index);
         // console.log("epst square: ", index + (pawnDir * 8));
@@ -58,7 +60,8 @@ function pawnMoves(state, index) {
                         piece: Piece.Pawn | state.colorToMove,
                         espnt: false,
                         enpassantCapture: false,
-                        isCastle: false
+                        isCastle: false,
+                        originalPiece: state.Squares[index]
                     });
                 }
                 // trigger enpassantCapture
@@ -69,7 +72,8 @@ function pawnMoves(state, index) {
                         piece: Piece.Pawn | state.colorToMove,
                         espnt: false,
                         enpassantCapture: true,
-                        isCastle: false
+                        isCastle: false,
+                        originalPiece: state.Squares[index]
                     });
                 }
             }
@@ -103,7 +107,8 @@ function knightMoves(state, index) {
                         piece: Piece.Knight | state.colorToMove,
                         espnt: false,
                         enpassantCapture: false,
-                        isCastle: false
+                        isCastle: false,
+                        originalPiece: state.Squares[index]
                     });
                 }
             }
@@ -136,7 +141,8 @@ function kingMoves(state, index) {
                         piece: Piece.King | state.colorToMove,
                         espnt: false,
                         enpassantCapture: false,
-                        isCastle: false
+                        isCastle: false,
+                        originalPiece: state.Squares[index]
                     });
                 }
             }
@@ -152,7 +158,8 @@ function kingMoves(state, index) {
                 piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
-                isCastle: true
+                isCastle: true,
+                originalPiece: state.Squares[index]
             });
         }
         if ((state.castling.White_Queenside) && (state.Squares[index - 1] === 0) && (state.Squares[index - 2] === 0) && (state.Squares[index - 3] === 0)) {
@@ -162,7 +169,8 @@ function kingMoves(state, index) {
                 piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
-                isCastle: true
+                isCastle: true,
+                originalPiece: state.Squares[index]
             });
         }
     }
@@ -174,7 +182,8 @@ function kingMoves(state, index) {
                 piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
-                isCastle: true
+                isCastle: true,
+                originalPiece: state.Squares[index]
             });
         }
         if ((state.castling.Black_Queenside) && (state.Squares[index - 1] === 0) && (state.Squares[index - 2] === 0) && (state.Squares[index - 3] === 0)) {
@@ -184,7 +193,8 @@ function kingMoves(state, index) {
                 piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
-                isCastle: true
+                isCastle: true,
+                originalPiece: state.Squares[index]
             });
         }
     }

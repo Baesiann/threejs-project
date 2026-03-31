@@ -93,13 +93,13 @@ class ChessAI {
             for (const move of moves) {
                 const captured = state.Squares[move.to];    // save so it can be undone
                 state.makeMove(move);
-                state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
+                // state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
 
                 // recursive call
                 let evaluation = this.minimax(state, depth - 1, alpha, beta, false);
 
                 state.unmakeMove(move, captured);   // undo move
-                state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
+                // state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
                 
                 maxEval = Math.max(maxEval, evaluation);
                 alpha = Math.max(alpha, evaluation);
@@ -111,12 +111,12 @@ class ChessAI {
             for (const move of moves) {
                 const captured = state.Squares[move.to];
                 state.makeMove(move);
-                state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
+                // state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
 
                 let evaluation = this.minimax(state, depth - 1, alpha, beta, true);
 
                 state.unmakeMove(move, captured);
-                state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
+                // state.colorToMove = (state.colorToMove === 8) ? 16 : 8;
 
                 minEval = Math.min(minEval, evaluation);
                 beta = Math.min(beta, evaluation);

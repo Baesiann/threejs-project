@@ -31,7 +31,7 @@ async function main() {
     engine.updateMoves();
     
     const game = new GameController(engine, world, {
-        white: 'ai',
+        white: 'human',
         black: 'ai'
     });
     world.updateBoard(engine);

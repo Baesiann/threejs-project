@@ -110,7 +110,7 @@ function applyMove(state, move) {
     if (state.colorToMove === Piece.Black) {state.fullmove++};
 
     // set enpassant square
-    if(move.epsnt !== false) {
+    if(move.espnt !== false) {
         state.en_passantable = move.espnt;
     } else {
         // has to be set back to false so ep doens't exist for consecutive moves

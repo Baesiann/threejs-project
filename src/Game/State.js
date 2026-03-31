@@ -21,6 +21,7 @@ class State {
     }
 
     updateMoves() {
+        this.isCheck = this.detectCheck();
         this.moves = validateMoves(this, generateMoves(this));
         if (this.moves.length === 0) {
             this.gameover = this.isCheck ? "checkmate" : "stalemate";
@@ -46,29 +47,53 @@ class State {
 
         // reset promotion
         this.pendPromotion = 0;
+
+        this.colorToMove = (this.colorToMove === Piece.White) ? Piece.Black : Piece.White;
     }
 
     unmakeMove(move, captured) {
-        this.Squares[move.from] = this.Squares[move.to];
+        this.Squares[move.from] = move.originalPiece;
         this.Squares[move.to] = captured;
 
         this.pendPromotion = 0;
+
+        this.colorToMove = (this.colorToMove === Piece.White) ? Piece.Black : Piece.White;
     }
 
     getLegalMoves(square) {
         return this.moves.filter(m => m.from === square);
     }
 
-    clone() {
-        const clone = new State();
-        clone.Squares = this.Squares.slice();
-        clone.colorToMove = this.colorToMove;
-        clone.castling = this.castling;
-        clone.en_passantable = this.en_passantable;
-        clone.halfmove = this.halfmove;
-        clone.fullmove = this.fullmove;
+    detectCheck() {
+        // King of color to move
+        const kingType = (this.colorToMove | 1);
+        const kingSquare = this.Squares.findIndex(s => s === kingType);
 
-        return clone;
+        if (kingSquare === -1) return false;    // safety, shouldn't happen
+
+        // flip to see attackers
+        const originalTurn = this.colorToMove;
+        this.colorToMove = (this.colorToMove === 8) ? 16 : 8;
+
+        // generate opponent moves
+        const oppMoves = generateMoves(this);
+
+        const isUnderAttack = oppMoves.some(m => m.to === kingSquare);
+
+        this.colorToMove = originalTurn;
+
+        return isUnderAttack;
+    }
+
+    clone() {
+        return new State(
+            [...this.Squares],
+            this.colorToMove,
+            this.castling,
+            this.en_passantable,
+            this.halfmove,
+            this.fullmove
+        );
     }
 
     //use for testing

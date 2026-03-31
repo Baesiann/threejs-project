@@ -35,7 +35,8 @@ function generateSlidingMoves (state, index, type) {
                 piece: state.Squares[index] | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
-                isCastle: false
+                isCastle: false,
+                originalPiece: state.Squares[index]
             });
 
             // if there is an enemy on the last move, break loop

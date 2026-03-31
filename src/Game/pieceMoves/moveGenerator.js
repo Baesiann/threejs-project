@@ -14,7 +14,10 @@ function generateMoves(state) {
 
         // Valid pieces of the color will have an int between 7 & 0
         if (type < 8 && type > 0) {
-            moves.push(generatePieceMoves(state, type, index));
+            // get moves of specific piece
+            const pieceMoves = generatePieceMoves(state, type, index);
+            // push each move individually
+            moves.push(...pieceMoves);
         }
     }
 

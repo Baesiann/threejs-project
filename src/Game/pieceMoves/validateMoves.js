@@ -2,53 +2,53 @@
 
 import { generateMoves } from "./moveGenerator";
 import { Piece } from "../Piece";
-import { State } from "../State";
 
 function validateMoves(state, moves) {
     const legalMoves = [];
 
+    // Rid outer loop to match flattened generateMoves
     for (let i = 0; i < moves.length; i++) {
-        for (let j = 0; j < moves[i].length; j++) {
-            const move = moves[i][j];
-            let isIllegal = false;
+        const move = moves[i];
+        let isIllegal = false;
 
-            // check castling cases
-            if (move.isCastle) {
-                // can't castle out of check
-                if (canOpponentReach(state, move.from)) {
-                    isIllegal = true;
-                }
-
-                // can't castle through check
-                if (!isIllegal) {
-                    const direc = (move.to > move.from) ? 1 : -1;
-                    const crossing = move.from + direc;
-                    if (canOpponentReach(state, crossing)) {
-                        isIllegal = true;
-                    }
-                }
+        // check castling cases
+        if (move.isCastle) {
+            // can't castle out of check
+            if (canOpponentReach(state, move.from)) {
+                isIllegal = true;
             }
 
-            // Make the move, check destination
+            // can't castle through check
             if (!isIllegal) {
-                let tempState = state.clone();
-                tempState.makeMove(move);
-                const movingColor = tempState.colorToMove;
-                const kingPos = tempState.Squares.indexOf(movingColor + Piece.King);
-
-                // Generate opponent responses
-                tempState.colorToMove = (tempState.colorToMove === Piece.White) ? Piece.Black : Piece.White; 
-                const oppMoves = generateMoves(tempState);
-
-                // if any move can take the king (mmm nested search)
-                if (oppMoves.some(group => group.some(m => m.to === kingPos))) {
+                const direc = (move.to > move.from) ? 1 : -1;
+                const crossing = move.from + direc;
+                if (canOpponentReach(state, crossing)) {
                     isIllegal = true;
                 }
+            }
+        }
 
-                // add the move if tests passed
-                if (!isIllegal) {
-                    legalMoves.push(move);
-                }
+        // Make the move, check destination
+        if (!isIllegal) {
+            const captured = state.Squares[move.to];
+            state.makeMove(move);
+            const sideWhoMoved = (state.colorToMove === Piece.White) ? Piece.Black : Piece.White;
+            const kingPos = state.Squares.indexOf(sideWhoMoved | Piece.King);
+
+            // Generate opponent responses
+            const oppMoves = generateMoves(state);
+
+            // if any move can take the king (mmm nested search)
+            // altered to flattened search
+            if (oppMoves.some(m => m.to === kingPos)) {
+                isIllegal = true;
+            }
+
+            state.unmakeMove(move, captured)
+
+            // add the move if tests passed
+            if (!isIllegal) {
+                legalMoves.push(move);
             }
         }
     }
@@ -63,5 +63,6 @@ function canOpponentReach(state, targetSquare) {
     let testState = state.clone();
     testState.colorToMove = (state.colorToMove === Piece.White) ? Piece.Black : Piece.White;
     const oppMoves = generateMoves(testState);
-    return oppMoves.some(group => group.some(m => m.to === targetSquare));
+    // flatten search here too
+    return oppMoves.some(m => m.to === targetSquare);
 }

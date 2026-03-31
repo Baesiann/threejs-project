@@ -6,20 +6,12 @@
  */
 function whoIs(state, index) {
     const piece = state.Squares[index];
-    const type = piece - state.colorToMove;
+    if (piece === 0) return 0;
 
-    // instantly return 0 if square is empty
-    if (piece == 0) {
-        return 0;
-    }
+    const isWhitePiece = piece < 16;
+    const isWhiteTurn = state.colorToMove === 8;
 
-    // return 1 if square contains friendly
-    if (type < 8 && type > 0) {
-        return 1;
-    }
-
-    // gotta be enemy otherwise
-    return -1;
+    return (isWhitePiece === isWhiteTurn) ? 1 : -1;
 }
 
 export { whoIs };

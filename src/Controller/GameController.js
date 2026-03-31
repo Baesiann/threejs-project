@@ -132,7 +132,7 @@ class GameController {
         this.state.makeMove(move);
 
         // Moved from applyMove
-        this.state.colorToMove = (this.state.colorToMove === Piece.White) ? Piece.Black : Piece.White;
+        // this.state.colorToMove = (this.state.colorToMove === Piece.White) ? Piece.Black : Piece.White;
 
         if (this.flipper) {
             // Dispatch an event that a move was made
@@ -142,11 +142,16 @@ class GameController {
         }
 
         this.moveHist.push(move);
+        this.world.animateMove(move);
         this.state.updateMoves();
-        this.world.updateBoard(this.state, move);
+
         this.pendingMove = null;
         this.selectedPiece = null;
-
+        this.world.pieceGroup.children.forEach(mesh => {
+            if (mesh.userData.type === 'piece') {
+                mesh.userData.moves = this.state.getLegalMoves(mesh.userData.square);
+            }
+        });
         // safety reset
         this.isAiThinking = false;
 
@@ -185,7 +190,11 @@ class GameController {
     }
 
     makeAiMove() {
-        const aiMove = this.ai.getBestMove(this.state);
+        // give the ai a cloned state
+        const tempState = this.state.clone()
+        tempState.updateMoves();
+        
+        const aiMove = this.ai.getBestMove(tempState);
         console.log("AI Plays: ", aiMove);
 
         this.isAiThinking = false;
