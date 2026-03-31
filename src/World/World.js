@@ -12,6 +12,7 @@ import { Loop } from './systems/Loop.js';
 import { drawPiece } from './helpers/drawPiece.js';
 import { drawLegalMoves } from './helpers/drawLegalMoves.js';
 import { drawEPOptions } from './helpers/drawEPOptions.js';
+import { drawMoveMade } from './helpers/drawMoveMade.js';
 import { Group } from 'three';
 
 import { Vector3 } from 'three';
@@ -83,8 +84,11 @@ class World {
         this.pieceGroup.name = 'Pieces';
         this.indicatorGroup = new Group();
         this.indicatorGroup.name = 'Indicators';
+        this.highlightGroup = new Group();
+        this.highlightGroup.name = 'Highlights';
         scene.add(this.pieceGroup);
         scene.add(this.indicatorGroup);
+        scene.add(this.highlightGroup);
 
         this.board.traverse((child) => {
             if (child.isMesh) {
@@ -97,12 +101,23 @@ class World {
         this.board.position.set(0, -0.3, 0);
     }
 
-    updateBoard(state) {
+    updateBoard(state, move=false) {
         // console.log("updating with state: ", state);
         // clear all existing pieces
         while(this.pieceGroup.children.length > 0) { 
             raycaster.remove(this.pieceGroup.children[0]);
             this.pieceGroup.remove(this.pieceGroup.children[0]); 
+        }
+
+        // clear all existing highlights
+        while(this.highlightGroup.children.length > 0) { 
+            this.highlightGroup.remove(this.highlightGroup.children[0]); 
+        }
+
+        // if move passed (from finalizeMove), draw squares
+        if (move && move.from !== undefined && move.to !== undefined) {
+            drawMoveMade(this.highlightGroup, move.from);
+            drawMoveMade(this.highlightGroup, move.to);
         }
 
         // int to model conversion

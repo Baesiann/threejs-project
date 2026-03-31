@@ -55,7 +55,7 @@ class ChessAI {
             state.makeMove(move);
             // Search 3 moves deep
             let boardValue = this.minimax(state, 3, -Infinity, Infinity, !isWhite);
-            state.unmakeMove(move); // You need to write this!
+            state.unmakeMove(move);
 
             if (isWhite) {
                 if (boardValue > bestValue) {

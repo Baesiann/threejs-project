@@ -143,7 +143,7 @@ class GameController {
 
         this.moveHist.push(move);
         this.state.updateMoves();
-        this.world.updateBoard(this.state);
+        this.world.updateBoard(this.state, move);
         this.pendingMove = null;
         this.selectedPiece = null;
 
