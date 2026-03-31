@@ -164,10 +164,10 @@ class World {
             drawEPOptions(this.epGroup, raycaster, this.whiteKnight, 8, camera, 3, 11, true);
         } else {
             // draw black pieces to promote
-            drawEPOptions(this.epGroup, raycaster, this.blackQueen, 8, camera, 0, 22);
-            drawEPOptions(this.epGroup, raycaster, this.blackRook, 8, camera, 1, 21);
-            drawEPOptions(this.epGroup, raycaster, this.blackBishop, 8, camera, 2, 20);
-            drawEPOptions(this.epGroup, raycaster, this.blackKnight, 8, camera, 3, 19, true);
+            drawEPOptions(this.epGroup, raycaster, this.blackQueen, 16, camera, 0, 22);
+            drawEPOptions(this.epGroup, raycaster, this.blackRook, 16, camera, 1, 21);
+            drawEPOptions(this.epGroup, raycaster, this.blackBishop, 16, camera, 2, 20);
+            drawEPOptions(this.epGroup, raycaster, this.blackKnight, 16, camera, 3, 19, true);
         }
     }
 
