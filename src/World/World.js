@@ -11,7 +11,10 @@ import { Loop } from './systems/Loop.js';
 
 import { drawPiece } from './helpers/drawPiece.js';
 import { drawLegalMoves } from './helpers/drawLegalMoves.js';
+import { drawEPOptions } from './helpers/drawEPOptions.js';
 import { Group } from 'three';
+
+import { Vector3 } from 'three';
 
 // These variables are module-scoped
 // They cannot be accessed from outside the module
@@ -35,6 +38,12 @@ class World {
 
         loop.updatables.push(controls);
         scene.add(ambientLight, mainLight);
+
+        this.epGroup = new Group();
+        this.epGroup.name = 'EPoptions';
+
+        scene.add(camera);
+        camera.add(this.epGroup);
 
         const resizer = new Resizer(container, camera, renderer);
     }
@@ -116,7 +125,10 @@ class World {
         state.Squares.forEach((pieceValue, i) => {
             if (pieceValue !== 0) {
                 const model = pieceDict[pieceValue];
-                if (model) {
+                // rotate black knight
+                if (pieceValue === 19 && model) {
+                    drawPiece(this.pieceGroup, raycaster, model, i, state, true);
+                } else if (model) {
                     drawPiece(this.pieceGroup, raycaster, model, i, state);
                 }
             }
@@ -141,8 +153,31 @@ class World {
     triggerPromotion(color) {
         // Disable ability to click on other pieces
         // Store current interactables
-        var tempStorage = raycaster.interactable;
-        
+        this.savedInteractables = [...raycaster.interactable];
+        raycaster.interactable = [];
+
+        if (color === 8) {
+            // draw white pieces to promote
+            drawEPOptions(this.epGroup, raycaster, this.whiteQueen, 8, camera, 0, 14);
+            drawEPOptions(this.epGroup, raycaster, this.whiteRook, 8, camera, 1, 13);
+            drawEPOptions(this.epGroup, raycaster, this.whiteBishop, 8, camera, 2, 12);
+            drawEPOptions(this.epGroup, raycaster, this.whiteKnight, 8, camera, 3, 11, true);
+        } else {
+            // draw black pieces to promote
+            drawEPOptions(this.epGroup, raycaster, this.blackQueen, 8, camera, 0, 22);
+            drawEPOptions(this.epGroup, raycaster, this.blackRook, 8, camera, 1, 21);
+            drawEPOptions(this.epGroup, raycaster, this.blackBishop, 8, camera, 2, 20);
+            drawEPOptions(this.epGroup, raycaster, this.blackKnight, 8, camera, 3, 19, true);
+        }
+    }
+
+    clearPromotionUI() {
+        // Empty the group
+        while(this.epGroup.children.length > 0) {
+            this.epGroup.remove(this.epGroup.children[0]);
+        }
+        // Restore the board pieces to the raycaster
+        raycaster.interactable = this.savedInteractables;
     }
 
     render() {

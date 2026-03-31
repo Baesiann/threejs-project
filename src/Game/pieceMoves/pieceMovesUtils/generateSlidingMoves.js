@@ -32,7 +32,7 @@ function generateSlidingMoves (state, index, type) {
             moves.push({
                 from: index,
                 to: targetIndex,
-                piece: state.Squares[index],
+                piece: state.Squares[index] | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: false

@@ -43,23 +43,6 @@ class createRaycaster {
 
         this.raycaster.setFromCamera(this.clickMouse, this.camera);
 
-        // console.log(this.interactable);
-
-        // // Hardcore debug: print all intersections
-        // const allHits = this.raycaster.intersectObjects(this.scene.children, true);
-    
-        // console.log("Total objects hit by ray:", allHits.length);
-        
-        // if (allHits.length > 0) {
-        //     const hit = allHits[0].object;
-        //     console.log("Top-most hit object name/type:", hit.name, hit.type);
-        //     console.log("Hit object userData:", hit.userData);
-            
-        //     // Check if this hit exists in your interactable list
-        //     const isRegistered = this.interactable.some(obj => obj === hit || obj.contains?.(hit));
-        //     console.log("Is this object in the interactable list?", isRegistered);
-        // }
-
         const found = this.raycaster.intersectObjects(
             this.interactable,
             true

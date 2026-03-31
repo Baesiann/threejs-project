@@ -20,7 +20,7 @@ function applyMove(state, move) {
             state.makeMove({
                 from: 7,
                 to: 5,
-                piece: Piece.Rook,
+                piece: Piece.Rook | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: false
@@ -33,7 +33,7 @@ function applyMove(state, move) {
             state.makeMove({
                 from: 0,
                 to: 3,
-                piece: Piece.Rook,
+                piece: Piece.Rook | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: false
@@ -46,7 +46,7 @@ function applyMove(state, move) {
             state.makeMove({
                 from: 63,
                 to: 61,
-                piece: Piece.Rook,
+                piece: Piece.Rook | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: false
@@ -59,7 +59,7 @@ function applyMove(state, move) {
             state.makeMove({
                 from: 56,
                 to: 59,
-                piece: Piece.Rook,
+                piece: Piece.Rook | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: false
@@ -78,13 +78,12 @@ function applyMove(state, move) {
     }
 
     // promotion handling
-    console.log(move.piece | state.colorToMove);
+    // console.log(move.piece | state.colorToMove);
     if ((move.piece | state.colorToMove) === 10) {
         // White promotion
         if (move.to >= 56) {
             // Trigger promotion condition
             state.pendPromotion = Piece.White;
-            console.log("promo time");
         }
     }
     if ((move.piece | state.colorToMove) === 18) {
@@ -128,11 +127,8 @@ function applyMove(state, move) {
     if (move.from === 63) {state.castling.Black_Kingside = false}
 
     // swap turn to move
-    if (state.colorToMove === Piece.White) {
-        state.colorToMove = Piece.Black;
-    } else {
-        state.colorToMove = Piece.White;
-    }
+    // Moved to gameController finalizeMove
+    // Because promotion was breaking turn swapping
 
     return state;
 }

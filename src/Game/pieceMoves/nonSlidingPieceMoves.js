@@ -14,7 +14,7 @@ function pawnMoves(state, index) {
         moves.push({
             from: index,
             to: index + (8 * pawnDir),
-            piece: Piece.Pawn,
+            piece: Piece.Pawn | state.colorToMove,
             epsnt: false,
             enpassantCapture: false,
             isCastle: false
@@ -31,7 +31,7 @@ function pawnMoves(state, index) {
         moves.push({
             from: index,
             to: index + (16 * pawnDir),
-            piece: Piece.Pawn,
+            piece: Piece.Pawn | state.colorToMove,
             espnt: index + (pawnDir * 8),
             enpassantCapture: false,
             isCastle: false
@@ -55,7 +55,7 @@ function pawnMoves(state, index) {
                     moves.push({
                         from: index,
                         to: target,
-                        piece: Piece.Pawn,
+                        piece: Piece.Pawn | state.colorToMove,
                         espnt: false,
                         enpassantCapture: false,
                         isCastle: false
@@ -66,7 +66,7 @@ function pawnMoves(state, index) {
                     moves.push({
                         from: index,
                         to: target,
-                        piece: Piece.Pawn,
+                        piece: Piece.Pawn | state.colorToMove,
                         espnt: false,
                         enpassantCapture: true,
                         isCastle: false
@@ -100,7 +100,7 @@ function knightMoves(state, index) {
                     moves.push({
                         from: index,
                         to: index + offsets[i],
-                        piece: Piece.Knight,
+                        piece: Piece.Knight | state.colorToMove,
                         espnt: false,
                         enpassantCapture: false,
                         isCastle: false
@@ -133,7 +133,7 @@ function kingMoves(state, index) {
                     moves.push({
                         from: index,
                         to: index + offsets[i],
-                        piece: Piece.King,
+                        piece: Piece.King | state.colorToMove,
                         espnt: false,
                         enpassantCapture: false,
                         isCastle: false
@@ -149,7 +149,7 @@ function kingMoves(state, index) {
             moves.push({
                 from: index,
                 to: index + 2,
-                piece: Piece.King,
+                piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: true
@@ -159,7 +159,7 @@ function kingMoves(state, index) {
             moves.push({
                 from: index,
                 to: index - 2,
-                piece: Piece.King,
+                piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: true
@@ -171,7 +171,7 @@ function kingMoves(state, index) {
             moves.push({
                 from: index,
                 to: index + 2,
-                piece: Piece.King,
+                piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: true
@@ -181,7 +181,7 @@ function kingMoves(state, index) {
             moves.push({
                 from: index,
                 to: index - 2,
-                piece: Piece.King,
+                piece: Piece.King | state.colorToMove,
                 espnt: false,
                 enpassantCapture: false,
                 isCastle: true

@@ -18,6 +18,8 @@ class GameController {
                 this.selectPiece(e.detail);
             } else if (e.detail.name === 'indicator') {
                 this.selectIndicator(e.detail);
+            } else if (e.detail.promotionType) {
+                this.finishPromotion(e.detail.promotionType);
             }
             
         });
@@ -68,26 +70,39 @@ class GameController {
         }
     }
 
-    movePiece(move) {
-        // Track move
-        this.moveHist.push(move);
+    // handles promotion selection
+    finishPromotion(pieceType) {
+        if (this.pendingMove) {
+            // update move
+            this.pendingMove.piece = pieceType;
+            // console.log(this.pendingMove);
+            // world needs to clear promotion UI and restore clicks
+            this.world.clearPromotionUI();
+            // finalize the move
+            this.finalizeMove(this.pendingMove);
+        }
+    }
 
+    movePiece(move) {
         applyMove(this.state, move);
 
-        if(this.state.pendPromotion === Piece.White) {
-            console.log("PROMOTIONNNN");
-            this.world.triggerPromotion(Piece.White);
-            move.Piece = 14;
-            console.log(move);
+        // Check for promotion
+        if (this.state.pendPromotion !== 0) {
+            // save the current move to finish later
+            this.pendingMove = move;
+            this.world.triggerPromotion(this.state.pendPromotion);
+            return
         }
 
-        if(this.state.pendPromotion === Piece.Black) {
-            console.log("BLACK PROMOOOOO");
-            this.world.triggerPromotion(Piece.Black)
-        }
+        // Normal move
+        this.finalizeMove(move);
+    }
 
-        // apply update to squares here: promotion handling
+    finalizeMove(move) {
         this.state.makeMove(move);
+
+        // Moved from applyMove
+        this.state.colorToMove = (this.state.colorToMove === Piece.White) ? Piece.Black : Piece.White;
 
         if (this.flipper) {
             // Dispatch an event that a move was made
@@ -96,10 +111,13 @@ class GameController {
             }));
         }
 
+        this.moveHist.push(move);
         this.state.updateMoves();
-
         this.world.updateBoard(this.state);
+        this.pendingMove = null;
+        this.selectedPiece = null;
     }
+
 }
 
 export { GameController };

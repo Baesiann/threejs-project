@@ -16,7 +16,7 @@ class State {
         this.moves;
         this.isCheck;
         // Promotion handling
-        this.pendPromotion = false;
+        this.pendPromotion = 0;
     }
 
     updateMoves() {
@@ -27,20 +27,15 @@ class State {
     }
 
     makeMove(move) {
-        let toPiece = this.Squares[move.from];
+        let toPiece = move.piece || this.Squares[move.from];
 
-        if (this.pendPromotion === Piece.White) {
-            toPiece = Piece.White | Piece.Queen;
-            this.pendPromotion = false;
-        }
-        if (this.pendPromotion === Piece.Black) {
-            toPiece = Piece.Black | Piece.Queen;
-            this.pendPromotion = false;
-        }
         this.Squares[move.to] = toPiece;
         this.Squares[move.from] = 0;
 
-        return State;
+        // reset promotion
+        this.pendPromotion = 0;
+
+        return this;
     }
 
     getLegalMoves(square) {
