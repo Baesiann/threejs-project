@@ -15,38 +15,51 @@ function pawnMoves(state, index) {
     if (state.colorToMove === Piece.Black) {
         startRow = 6;
     }
+    const promotionRank = (state.colorToMove === Piece.White) ? 7 : 0;
 
-    if (state.Squares[index + (8 * pawnDir)] === 0) {
-        // Single move
-        moves.push({
-            from: index,
-            to: index + (8 * pawnDir),
-            piece: Piece.Pawn | state.colorToMove,
-            espnt: false,
-            enpassantCapture: false,
-            isCastle: false,
-            originalPiece: state.Squares[index]
-        });
-        if (row === startRow && state.Squares[index + (16 * pawnDir)] === 0) {
-            // only add double move if single move is also valid
+    // Helper to handle the "4 moves for promotion" vs "1 move for normal"
+    const addPawnMove = (to, isCapture = false, isEnPassant = false) => {
+        const targetRow = Math.floor(to / 8);
+        const isPromotion = (targetRow === promotionRank);
+
+        if (isPromotion) {
+            const promoTypes = [Piece.Queen, Piece.Rook, Piece.Bishop, Piece.Knight];
+            promoTypes.forEach(type => {
+                moves.push({
+                    from: index,
+                    to: to,
+                    piece: type | state.colorToMove,
+                    espnt: false,
+                    enpassantCapture: isEnPassant,
+                    isCastle: false,
+                    isPromotion: true,
+                    originalPiece: state.Squares[index]
+                });
+            });
+        } else {
             moves.push({
                 from: index,
-                to: index + (16 * pawnDir),
+                to: to,
                 piece: Piece.Pawn | state.colorToMove,
-                espnt: index + (pawnDir * 8),
-                enpassantCapture: false,
+                espnt: (Math.abs(to - index) === 16) ? index + (8 * pawnDir) : false,
+                enpassantCapture: isEnPassant,
                 isCastle: false,
+                isPromotion: false,
                 originalPiece: state.Squares[index]
             });
         }
-    }
-    // console.log("index start: ", index);
-    // console.log("epst square: ", index + (pawnDir * 8));
-    // console.log("index of pawn: ", index + (16 * pawnDir));
-    // console.log(pawnDir);
+    };
 
-    // check if an enemy piece sits on the diagonal     NEW: or enpassantable
-    // obtain diagonal indexes and check for realm shift
+    // Check forward squares
+    if (state.Squares[index + (8 * pawnDir)] === 0) {
+        addPawnMove(index + (8 * pawnDir)); // Helper handles if this is a promotion push
+
+        if (row === startRow && state.Squares[index + (16 * pawnDir)] === 0) {
+            addPawnMove(index + (16 * pawnDir));
+        }
+    }
+
+    // check if an enemy piece sits on the diagonal
     let captureOffsets = [7, 9]; 
     for (let offset of captureOffsets) {
         let target = index + (offset * pawnDir);
@@ -54,28 +67,14 @@ function pawnMoves(state, index) {
             let targetCol = target % 8;
             // Ensure the capture is exactly 1 column away
             if (Math.abs(targetCol - (index % 8)) === 1) {
+                // Normal Capture
                 if (whoIs(state, target) === -1) {
-                    moves.push({
-                        from: index,
-                        to: target,
-                        piece: Piece.Pawn | state.colorToMove,
-                        espnt: false,
-                        enpassantCapture: false,
-                        isCastle: false,
-                        originalPiece: state.Squares[index]
-                    });
+                    addPawnMove(target); // Helper handles if this is a promotion capture
                 }
                 // trigger enpassantCapture
+                // En Passant Capture (never promotes but still good with helper)
                 if (target === state.en_passantable) {
-                    moves.push({
-                        from: index,
-                        to: target,
-                        piece: Piece.Pawn | state.colorToMove,
-                        espnt: false,
-                        enpassantCapture: true,
-                        isCastle: false,
-                        originalPiece: state.Squares[index]
-                    });
+                    addPawnMove(target, true);
                 }
             }
         }
