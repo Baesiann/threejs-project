@@ -11,27 +11,17 @@
 import { Piece } from "./Piece";
 
 function applyMove(state, move) {
-    if (!move === null) {
-        return console.log("bad");
-    }
-    // console.log("move: ", move);
-    // if it is castling, two pieces will move
-    // king will move anyways at end
-    // console.log(move);
-    // console.log(move.isCastle);
+    // If a piece is captured on a corner square, castling is lost for that corner
+    if (move.to === 0) state.castling.White_Queenside = false;
+    if (move.to === 7) state.castling.White_Kingside = false;
+    if (move.to === 56) state.castling.Black_Queenside = false;
+    if (move.to === 63) state.castling.Black_Kingside = false;
+
     if (move.isCastle) {
         // Rook move if white kingside
         if (move.to === 6) { 
             state.Squares[5] = Piece.Rook | state.colorToMove;
             state.Squares[7] = 0;
-            // state.makeMove({
-            //     from: 7,
-            //     to: 5,
-            //     piece: Piece.Rook | state.colorToMove,
-            //     espnt: false,
-            //     enpassantCapture: false,
-            //     isCastle: false
-            // });
             state.castling.White_Kingside = false;
             state.castling.White_Queenside = false;
         }
@@ -39,14 +29,6 @@ function applyMove(state, move) {
         if (move.to === 2) {
             state.Squares[3] = Piece.Rook | state.colorToMove;
             state.Squares[0] = 0;
-            // state.makeMove({
-            //     from: 0,
-            //     to: 3,
-            //     piece: Piece.Rook | state.colorToMove,
-            //     espnt: false,
-            //     enpassantCapture: false,
-            //     isCastle: false
-            // });
             state.castling.White_Kingside = false;
             state.castling.White_Queenside = false;
         }
@@ -54,14 +36,6 @@ function applyMove(state, move) {
         if (move.to === 62) {
             state.Squares[61] = Piece.Rook | state.colorToMove;
             state.Squares[63] = 0;
-            // state.makeMove({
-            //     from: 63,
-            //     to: 61,
-            //     piece: Piece.Rook | state.colorToMove,
-            //     espnt: false,
-            //     enpassantCapture: false,
-            //     isCastle: false
-            // });
             state.castling.Black_Kingside = false;
             state.castling.Black_Queenside = false;
         }
@@ -69,14 +43,6 @@ function applyMove(state, move) {
         if (move.to === 58) {
             state.Squares[59] = Piece.Rook | state.colorToMove;
             state.Squares[56] = 0;
-            // state.makeMove({
-            //     from: 56,
-            //     to: 59,
-            //     piece: Piece.Rook | state.colorToMove,
-            //     espnt: false,
-            //     enpassantCapture: false,
-            //     isCastle: false
-            // });
             state.castling.Black_Kingside = false;
             state.castling.Black_Queenside = false;
         }

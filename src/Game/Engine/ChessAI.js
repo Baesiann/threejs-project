@@ -52,10 +52,13 @@ class ChessAI {
         const moves = state.moves; // Your existing function
         
         for (const move of moves) {
+            const captured = state.Squares[move.to];
             state.makeMove(move);
             // Search 3 moves deep
-            let boardValue = this.minimax(state, 3, -Infinity, Infinity, !isWhite);
-            state.unmakeMove(move);
+            let boardValue = this.minimax(state, 4, -Infinity, Infinity, !isWhite);
+            state.unmakeMove(move, captured);
+
+            // console.log(`Move: ${move.from}->${move.to}, Value: ${boardValue}, POV: ${isWhite ? 'White' : 'Black'}`);
 
             if (isWhite) {
                 if (boardValue > bestValue) {
@@ -77,6 +80,12 @@ class ChessAI {
 
         state.updateMoves();
         const moves = state.moves;
+
+        moves.sort((a, b) => {
+            const aIsCapture = state.Squares[a.to] !== 0 ? 1 : 0;
+            const bIsCapture = state.Squares[b.to] !== 0 ? 1 : 0;
+            return bIsCapture - aIsCapture;
+        });
 
         if (moves.length === 0) {
             if (state.isCheck) {

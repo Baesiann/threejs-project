@@ -61,7 +61,7 @@ function createControls(camera, canvas) {
         return diff;
     }
 
-    controls.tick = () => {
+    controls.tick = (delta) => {
         
         if (rotating) {
 
@@ -75,7 +75,8 @@ function createControls(camera, canvas) {
             const diff = shortestAngleDiff(angle, targetRotation);
 
             // lerp
-            const step = diff * 0.05;
+            const rotationSpeed = 3.0;
+            const step = Math.sign(diff) * Math.min(Math.abs(diff), rotationSpeed * delta);
 
             camera.position.x = radius * Math.sin(angle + step);
             camera.position.z = radius * Math.cos(angle + step);

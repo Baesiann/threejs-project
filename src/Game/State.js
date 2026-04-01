@@ -4,6 +4,7 @@
 import { generateMoves } from "./pieceMoves/moveGenerator";
 import { validateMoves } from "./pieceMoves/validateMoves";
 import { Piece } from "./Piece";
+import { applyMove } from "./applyMove";
 
 class State {
     constructor(squares, color, castling, en_passantable, halfmove, fullmove) {
@@ -30,34 +31,66 @@ class State {
     }
 
     makeMove(move) {
-        if (!move) {
-            console.error("State.makeMove received undefined move!");
-            return;
-        }
-        
-        let toPiece = move.piece || this.Squares[move.from];
+        // Save the state before changed
+        move.prevCastling = {...this.castling};
+        move.prevEnpassant = this.en_passantable;
+        move.prevHalfmove = this.halfmove;
+        move.prevFullmove = this.fullmove;
 
-        if (toPiece === 0) {
-            console.error(`State: No piece found at square ${move.from}!`);
-            return;
-        }
+        // apply move
+        applyMove(this, move);
 
-        this.Squares[move.to] = toPiece;
+        // Finalize move
+        this.Squares[move.to] = move.piece || this.Squares[move.from];
         this.Squares[move.from] = 0;
-
-        // reset promotion
-        this.pendPromotion = 0;
-
         this.colorToMove = (this.colorToMove === Piece.White) ? Piece.Black : Piece.White;
     }
 
     unmakeMove(move, captured) {
+        this.colorToMove = (this.colorToMove === Piece.White) ? Piece.Black : Piece.White;
+        
+        // Move piece back
         this.Squares[move.from] = move.originalPiece;
         this.Squares[move.to] = captured;
 
-        this.pendPromotion = 0;
+        // Move rook back if castle
+        if (move.isCastle) {
+            // Rook move if white kingside
+            if (move.to === 6) { 
+                this.Squares[7] = Piece.Rook | this.colorToMove;
+                this.Squares[5] = 0;
+            }
+            // Rook move if white queenside
+            if (move.to === 2) {
+                this.Squares[0] = Piece.Rook | this.colorToMove;
+                this.Squares[3] = 0;
+            }
+            // Rook move if black kingside
+            if (move.to === 62) {
+                this.Squares[63] = Piece.Rook | this.colorToMove;
+                this.Squares[61] = 0;
+            }
+            // Rook move if black queenside
+            if (move.to === 58) {
+                this.Squares[56] = Piece.Rook | this.colorToMove;
+                this.Squares[59] = 0;
+            }
+        }
 
-        this.colorToMove = (this.colorToMove === Piece.White) ? Piece.Black : Piece.White;
+        // Restore En Passant Pawn
+        if (move.enpassantCapture) {
+            const pawn = (move.originalPiece & 8) ? 18 : 10; // Opponent's pawn
+            const pawnSq = (move.originalPiece & 8) ? move.to - 8 : move.to + 8;
+            this.Squares[pawnSq] = pawn;
+        }
+
+        // Restore state
+        this.castling = move.prevCastling;
+        this.en_passantable = move.prevEnpassant;
+        this.halfmove = move.prevHalfmove;
+        this.fullmove = move.prevFullmove;
+
+        this.pendPromotion = 0;
     }
 
     getLegalMoves(square) {

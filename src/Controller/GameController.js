@@ -1,6 +1,7 @@
 import { applyMove } from "../Game/applyMove";
 import { Piece } from "../Game/Piece";
 import { ChessAI } from "../Game/Engine/ChessAI";
+import AIWorker from "../workers/aiWorker?worker";
 
 class GameController {
     constructor(enginerState, world, options = {}) {
@@ -193,18 +194,24 @@ class GameController {
     }
 
     makeAiMove() {
-        // give the ai a cloned state
-        const tempState = this.state.clone()
-        tempState.updateMoves();
+        const worker = new AIWorker();
 
-        const aiMove = this.ai.getBestMove(tempState);
-        console.log("AI Plays: ", aiMove);
+        // send raw data
+        worker.postMessage({
+            squares: this.state.Squares,
+            colorToMove: this.state.colorToMove,
+            castling: this.state.castling,
+            en_passantable: this.state.en_passantable,
+            halfmove: this.state.halfmove,
+            fullmove: this.state.fullmove
+        });
 
-        this.isAiThinking = false;
-
-        this.movePiece(aiMove);
+        worker.onmessage = (e) => {
+            const aiMove = e.data;
+            this.movePiece(aiMove);
+            worker.terminate();
+        };
     }
-
 }
 
 export { GameController };
