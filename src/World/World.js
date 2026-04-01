@@ -14,6 +14,9 @@ import { drawLegalMoves } from './helpers/drawLegalMoves.js';
 import { drawEPOptions } from './helpers/drawEPOptions.js';
 import { drawMoveMade } from './helpers/drawMoveMade.js';
 import { getCoords } from './helpers/getCoords.js';
+
+import { animate } from './helpers/moveAnimator.js';
+
 import { Group } from 'three';
 
 import { Vector3 } from 'three';
@@ -119,87 +122,8 @@ class World {
     }
 
     animateMove(move, state) {
-        // clear all existing highlights
-        while(this.highlightGroup.children.length > 0) { 
-            this.highlightGroup.remove(this.highlightGroup.children[0]); 
-        }
-
-        // if move passed (from finalizeMove), draw squares
-        if (move && move.from !== undefined && move.to !== undefined) {
-            drawMoveMade(this.highlightGroup, move.from);
-            drawMoveMade(this.highlightGroup, move.to);
-        }
-        
-        // enpassant handling
-        if (move.enpassantCapture) {
-            // capture pawn behind
-            const pawnDir = (move.to > move.from) ? 1 : -1;
-            const captureSquare = move.to - (8 * pawnDir);
-
-            const epCapture = this.pieceGroup.children.find(
-                child => child.userData && child.userData.square === captureSquare
-            );
-
-            if (epCapture) {
-                this.pieceGroup.remove(epCapture);
-                raycaster.remove(epCapture);
-            }
-        }
-
-        // normal capture handling
-        const captured = this.pieceGroup.children.find(
-            child => child.userData && child.userData.square === move.to
-        );
-        if (captured && !move.enpassantCapture) {
-            // Remove piece
-            this.pieceGroup.remove(captured);
-            raycaster.remove(captured);
-        }
-
-        // moving piece handling
-        const movingPiece = this.pieceGroup.children.find(
-            child => child.userData && child.userData.square === move.from
-        );
-        if (movingPiece) {
-            if (move.isPromotion) {
-                // Remove mesh
-                this.pieceGroup.remove(movingPiece);
-                raycaster.remove(movingPiece);
-
-                // spawn new piece
-                const model = this.pieceDict[move.piece];
-                // rotate black knight
-                if (move.piece === 19 && model) {
-                    drawPiece(this.pieceGroup, raycaster, model, move.to, state, true);
-                } else if (model) {
-                    drawPiece(this.pieceGroup, raycaster, model, move.to, state);
-                }
-            } else {
-                const target = getCoords(move.to);
-            
-                // instant update
-                movingPiece.position.set(target.x, target.y, target.z);
-                movingPiece.userData.square = move.to;
-            }
-        }
-
-        // handle castling
-        if (move.isCastle) {
-            let rookFrom, rookTo;
-            if (move.to === 6)  { rookFrom = 7;  rookTo = 5; }  // White Kingside
-            if (move.to === 2)  { rookFrom = 0;  rookTo = 3; }  // White Queenside
-            if (move.to === 62) { rookFrom = 63; rookTo = 61; } // Black Kingside
-            if (move.to === 58) { rookFrom = 56; rookTo = 59; } // Black Queenside
-
-            const rookPiece = this.pieceGroup.children.find(
-                child => child.userData && child.userData.square === rookFrom
-            );
-            if (rookPiece) {
-                const rookTarget = getCoords(rookTo);
-                rookPiece.position.set(rookTarget.x, rookTarget.y, rookTarget.z);
-                rookPiece.userData.square = rookTo;
-            }
-        }
+        // Call helper function
+        animate(this, move, state, raycaster);
     }
 
     updateBoard(state, move=false) {
