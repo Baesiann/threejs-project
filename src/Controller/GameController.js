@@ -24,6 +24,7 @@ class GameController {
         // Click returns userData
         // add condition to listen only if human turn
         window.addEventListener('game:objectClicked', (e) => {
+            if (this.isAnimating) return;
             if (this.players[this.state.colorToMove] === 'human') {
                 // console.log(e.detail);
                 if (e.detail.piece) {
@@ -99,13 +100,6 @@ class GameController {
         }
     }
 
-    // Handle ai promotion bug
-    executeAiPromotion(move, pieceType) {
-        // Manually attach the piece and finalize
-        move.piece = pieceType;
-        this.finalizeMove(move);
-    }
-
     movePiece(move) {
         if (!move) return;
 
@@ -115,9 +109,8 @@ class GameController {
         // Check for promotion
         if (this.state.pendPromotion !== 0) {
             if (this.players[this.state.colorToMove] === 'ai') {
-                // AI autoqueens
-                const promoPiece = (this.state.pendPromotion === Piece.White) ? 14 : 22;
-                this.executeAiPromotion(move, promoPiece);
+                // AI can choose move
+                this.finalizeMove(move);
             } else {
                 this.world.triggerPromotion(this.state.pendPromotion);
             }
@@ -129,34 +122,44 @@ class GameController {
     }
 
     finalizeMove(move) {
+        // Lock input
+        this.isAnimating = true;
+
+        // Update state
         this.state.makeMove(move);
+        this.moveHist.push(move);
 
-        // Moved from applyMove
-        // this.state.colorToMove = (this.state.colorToMove === Piece.White) ? Piece.Black : Piece.White;
+        // Trigger animation
+        this.world.animateMove(move, this.state, () => {
+            // Runs after piece lands
+            this.state.updateMoves();
 
+            // Sync meshes and userData
+            this.world.pieceGroup.children.forEach(mesh => {
+                if (mesh.userData.type === 'piece') {
+                    mesh.userData.moves = this.state.getLegalMoves(mesh.userData.square);
+                }
+            });
+
+            // Reset variables
+            this.pendingMove = null;
+            this.selectedPiece = null;
+            this.isAiThinking = false;
+
+            // Unlock the input
+            this.isAnimating = false;
+
+            // Check next turn
+            this.checkNextTurn();
+        });
+
+        // flipper if needed
         if (this.flipper) {
             // Dispatch an event that a move was made
             window.dispatchEvent(new CustomEvent('moveMade', {
                 detail: this.state.colorToMove
             }));
         }
-
-        this.moveHist.push(move);
-        this.world.animateMove(move, this.state);
-        this.state.updateMoves();
-
-        this.pendingMove = null;
-        this.selectedPiece = null;
-        this.world.pieceGroup.children.forEach(mesh => {
-            if (mesh.userData.type === 'piece') {
-                mesh.userData.moves = this.state.getLegalMoves(mesh.userData.square);
-            }
-        });
-        // safety reset
-        this.isAiThinking = false;
-
-        // Check the turn after everything updates
-        this.checkNextTurn();
     }
 
     // check if human turn

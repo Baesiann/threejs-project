@@ -121,9 +121,9 @@ class World {
         this.board.position.set(0, -0.3, 0);
     }
 
-    animateMove(move, state) {
+    animateMove(move, state, callback) {
         // Call helper function
-        animate(this, move, state, raycaster);
+        animate(this, move, state, raycaster, callback);
     }
 
     updateBoard(state, move=false) {

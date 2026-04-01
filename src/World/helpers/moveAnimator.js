@@ -2,9 +2,10 @@ import { getCoords } from "./getCoords";
 import { whoIs } from "../../Game/pieceMoves/pieceMovesUtils/whoIs";
 import { drawPiece } from "./drawPiece.js";
 import { drawMoveMade } from "./drawMoveMade.js";
+import { gsap } from "gsap";
 
 // Controller function
-function animate(world, move, state, raycaster) {
+function animate(world, move, state, raycaster, onComplete) {
     // clear all existing highlights
     clearHighlights(world.highlightGroup);
 
@@ -13,46 +14,88 @@ function animate(world, move, state, raycaster) {
 
     // Branch to helper animation functions
     if (move.isCastle) {
-        animateCastle(world, move, state, raycaster);
+        animateCastle(world, move, state, raycaster, onComplete);
     } else if (move.enpassantCapture) {
-        animateEnPassant(world, move, state, raycaster);
+        animateEnPassant(world, move, state, raycaster, onComplete);
     } else if (whoIs(state, move.to) !== 0) {
-        animateCapture(world, move, state, raycaster);
+        animateCapture(world, move, state, raycaster, onComplete);
     } else {
-        animateSimple(world, move, state, raycaster);
+        animateSimple(world, move, state, raycaster, onComplete);
     }
 }
 
 // ANIMATION HELPER FUNCTIONS
 // simple moves and promotions
-function animateSimple(world, move, state, raycaster) {
+function animateSimple(world, move, state, raycaster, onComplete, jumpHeight=1.2) {
     const movingPiece = findMesh(world, move.from);
     if (!movingPiece) return;
 
-    if (move.isPromotion) {
-        handlePromotion(world, movingPiece, move, state, raycaster);
-    } else {
-        // instant set
-        const pos = getCoords(move.to);
-        movingPiece.position.set(pos.x, pos.y, pos.z);
-        movingPiece.userData.square = move.to;
-    }
+    const pieceType = state.Squares[move.from] & 0x7;
+    if (pieceType === 3) jumpHeight = 1.6;
+
+    const pos = getCoords(move.to);
+    const duration = 0.6;
+
+    // Sync through timeline
+    const tl = gsap.timeline({
+        onComplete: () => {
+            movingPiece.userData.square = move.to;
+            if (move.isPromotion) {
+                handlePromotion(world, movingPiece, move, state, raycaster);
+            }
+            if (onComplete) onComplete();
+        }
+    });
+
+    // horizontal movement
+    tl.to(movingPiece.position, {
+        x: pos.x,
+        z: pos.z,
+        duration: duration,
+        ease: "power2.inOut",
+    }, 0);  // Starts at time 0
+
+    // vertical movement (lift)
+    tl.to(movingPiece.position, {
+        y: jumpHeight,
+        duration: duration / 2,
+        ease: "power1.out",
+    }, 0);  // Starts at time 0
+
+    // vertical movement (down)
+    tl.to(movingPiece.position, {
+        y: 0,
+        duration: duration/2,
+        ease: "power1.in"
+    }, duration/2);     // starts halfway through
 }
 
 // capture moves
-function animateCapture(world, move, state, raycaster) {
+function animateCapture(world, move, state, raycaster, onComplete) {
     const captured = findMesh(world, move.to);
     if (captured) {
         // instant delete
-        world.pieceGroup.remove(captured);
-        raycaster.remove(captured);
+        // world.pieceGroup.remove(captured);
+        // raycaster.remove(captured);
+
+        // SINK
+        gsap.to(captured.position, {
+            y: -1,
+            duration: 0.2,
+            onComplete: () => {
+                world.pieceGroup.remove(captured);
+                raycaster.remove(captured);
+            }
+        });
     }
-    // After removed, move attacker
-    animateSimple(world, move, state, raycaster);
+    // After removed, wait before moving attacker
+    setTimeout(() => {
+        animateSimple(world, move, state, raycaster, onComplete);
+    }, 100);
 }
 
 // en passant
-function animateEnPassant(world, move, state, raycaster) {
+function animateEnPassant(world, move, state, raycaster, onComplete) {
     const pawnDir = (move.to > move.from) ? 1 : -1;
     const captureSquare = move.to - (8 * pawnDir);
 
@@ -63,27 +106,27 @@ function animateEnPassant(world, move, state, raycaster) {
         raycaster.remove(epCapture);
     }
     // After removed, move attacker
-    animateSimple(world, move, state, raycaster);
+    animateSimple(world, move, state, raycaster, onComplete);
 }
 
 // Castling
-function animateCastle(world, move, state, raycaster) {
-    // Move King first
-    this.animateSimple(world, move, state, raycaster);
+function animateCastle(world, move, state, raycaster, onComplete) {
+    // Move King first without passing callback
+    animateSimple(world, move, state, raycaster, () => {
+        let rookFrom, rookTo;
+        if (move.to === 6)  { rookFrom = 7;  rookTo = 5; }  // White Kingside
+        if (move.to === 2)  { rookFrom = 0;  rookTo = 3; }  // White Queenside
+        if (move.to === 62) { rookFrom = 63; rookTo = 61; } // Black Kingside
+        if (move.to === 58) { rookFrom = 56; rookTo = 59; } // Black Queenside
 
-    let rookFrom, rookTo;
-    if (move.to === 6)  { rookFrom = 7;  rookTo = 5; }  // White Kingside
-    if (move.to === 2)  { rookFrom = 0;  rookTo = 3; }  // White Queenside
-    if (move.to === 62) { rookFrom = 63; rookTo = 61; } // Black Kingside
-    if (move.to === 58) { rookFrom = 56; rookTo = 59; } // Black Queenside
-
-    const rookPiece = findMesh(world, rookFrom);
-    if (rookPiece) {
-        const rookTarget = getCoords(rookTo);
-        // Instant teleport
-        rookPiece.position.set(rookTarget.x, rookTarget.y, rookTarget.z);
-        rookPiece.userData.square = rookTo;
-    }
+        const rookPiece = findMesh(world, rookFrom);
+        if (rookPiece) {
+            const rookTarget = getCoords(rookTo);
+            
+            // Animate rook
+            animateSimple(world, { from: rookFrom, to: rookTo }, state, raycaster, onComplete, 2.5);
+        }
+    });
 }
 
 // GENERAL HELPER FUNCTIONS
