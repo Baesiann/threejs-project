@@ -91,6 +91,22 @@ class World {
         scene.add(this.indicatorGroup);
         scene.add(this.highlightGroup);
 
+        // int to model conversion
+        this.pieceDict = {
+            18: this.blackPawn,
+            21: this.blackRook,
+            19: this.blackKnight,
+            20: this.blackBishop,
+            22: this.blackQueen,
+            17: this.blackKing,
+            10: this.whitePawn,
+            13: this.whiteRook,
+            11: this.whiteKnight,
+            12: this.whiteBishop, 
+            14: this.whiteQueen,
+            9: this.whiteKing
+        };
+
         this.board.traverse((child) => {
             if (child.isMesh) {
                 child.receiveShadow = true;
@@ -102,7 +118,7 @@ class World {
         this.board.position.set(0, -0.3, 0);
     }
 
-    animateMove(move) {
+    animateMove(move, state) {
         // clear all existing highlights
         while(this.highlightGroup.children.length > 0) { 
             this.highlightGroup.remove(this.highlightGroup.children[0]); 
@@ -145,11 +161,26 @@ class World {
             child => child.userData && child.userData.square === move.from
         );
         if (movingPiece) {
-            const target = getCoords(move.to);
+            if (move.isPromotion) {
+                // Remove mesh
+                this.pieceGroup.remove(movingPiece);
+                raycaster.remove(movingPiece);
 
-            // instant update
-            movingPiece.position.set(target.x, target.y, target.z);
-            movingPiece.userData.square = move.to;
+                // spawn new piece
+                const model = this.pieceDict[move.piece];
+                // rotate black knight
+                if (move.piece === 19 && model) {
+                    drawPiece(this.pieceGroup, raycaster, model, move.to, state, true);
+                } else if (model) {
+                    drawPiece(this.pieceGroup, raycaster, model, move.to, state);
+                }
+            } else {
+                const target = getCoords(move.to);
+            
+                // instant update
+                movingPiece.position.set(target.x, target.y, target.z);
+                movingPiece.userData.square = move.to;
+            }
         }
 
         // handle castling
@@ -179,26 +210,10 @@ class World {
             this.pieceGroup.remove(this.pieceGroup.children[0]); 
         }
 
-        // int to model conversion
-        const pieceDict = {
-            18: this.blackPawn,
-            21: this.blackRook,
-            19: this.blackKnight,
-            20: this.blackBishop,
-            22: this.blackQueen,
-            17: this.blackKing,
-            10: this.whitePawn,
-            13: this.whiteRook,
-            11: this.whiteKnight,
-            12: this.whiteBishop, 
-            14: this.whiteQueen,
-            9: this.whiteKing
-        };
-
         // draw each piece to the group
         state.Squares.forEach((pieceValue, i) => {
             if (pieceValue !== 0) {
-                const model = pieceDict[pieceValue];
+                const model = this.pieceDict[pieceValue];
                 // rotate black knight
                 if (pieceValue === 19 && model) {
                     drawPiece(this.pieceGroup, raycaster, model, i, state, true);

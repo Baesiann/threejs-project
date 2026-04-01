@@ -142,7 +142,7 @@ class GameController {
         }
 
         this.moveHist.push(move);
-        this.world.animateMove(move);
+        this.world.animateMove(move, this.state);
         this.state.updateMoves();
 
         this.pendingMove = null;
@@ -181,7 +181,7 @@ class GameController {
             // Give it time
             setTimeout(() => {
                 this.makeAiMove();
-            }, 4000);
+            }, 2000);
         }
     }
 
@@ -193,7 +193,7 @@ class GameController {
         // give the ai a cloned state
         const tempState = this.state.clone()
         tempState.updateMoves();
-        
+
         const aiMove = this.ai.getBestMove(tempState);
         console.log("AI Plays: ", aiMove);
 
