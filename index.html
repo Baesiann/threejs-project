@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Discover ThreeJS</title>
+    <title>Chess</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8" />
@@ -14,6 +14,30 @@
 </head>
 
 <body>
+    
+    <div id="ui-layer">
+        <div id="main-menu" class="menu-card">
+            <h1>CHESS</h1>
+            
+            <div class="setting-group">
+                <p>Play As:</p>
+                <label>
+                    <input type="radio" name="user-color" value="white" checked> White
+                </label>
+                <label>
+                    <input type="radio" name="user-color" value="black"> Black
+                </label>
+                <p>Versus AI</p>
+            </div>
+
+            <div class="button-group">
+                <button class="menu-btn" data-mode="ai">Versus AI</button>
+                <button class="menu-btn" data-mode="online">PvP Online</button>
+                <button class="menu-btn" data-mode="local">PvP Local</button>
+            </div>
+        </div>
+    </div>
+    
     <h1>Chess</h1>
 
     <div id="scene-container">

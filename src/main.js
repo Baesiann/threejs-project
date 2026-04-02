@@ -4,7 +4,13 @@ import { State } from './Game/State.js';
 import { loadFromFen } from './Game/loadFromFen.js';
 
 // create the main function
-async function main() {
+async function main(mode) {
+    // Get chosen color from radio buttons
+    const selectedColor = document.querySelector('input[name="user-color"]:checked').value;
+    // Hide the UI layer
+    const uiLayer = document.getElementById('ui-layer');
+    if (uiLayer) uiLayer.style.display = "none";
+
     // get reference to the container element
     const container = document.querySelector('#scene-container');
 
@@ -29,17 +35,32 @@ async function main() {
     
     const engine = new State(board, color, castling, en_passantable, halfmove, fullmove);
     engine.updateMoves();
+
+    // setup config
+    let config = { white: 'human', black: 'human', flipper: true };
+    if (mode === 'ai') {
+        config.flipper = false;
+        if (selectedColor === 'white') {
+            config.white = 'human';
+            config.black = 'ai';
+        } else {
+            config.white = 'ai';
+            config.black = 'human';
+            // Start the camera on the black side
+            world.controls.rotateCameraToBlack(); 
+        }
+    }
     
-    const game = new GameController(engine, world, {
-        white: 'human',
-        black: 'ai'
-    });
+    const game = new GameController(engine, world, config);
     world.updateBoard(engine);
 
     game.start();
 }
 
-// calling main starts the app
-main().catch((err) => {
-    console.error(err);
+// Menu buttons
+document.querySelectorAll('.menu-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-mode');
+        main(mode).catch(err => console.error("Match failed to start:", err));
+    });
 });

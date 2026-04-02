@@ -10,7 +10,7 @@ class GameController {
 
         this.selectedPiece;
         this.moveHist = [];
-        this.flipper = false;
+        this.flipper = options.flipper || false;
 
         this.ai = new ChessAI(this.state);
 
@@ -185,7 +185,7 @@ class GameController {
             // Give it time
             setTimeout(() => {
                 this.makeAiMove();
-            }, 2000);
+            }, 200);
         }
     }
 

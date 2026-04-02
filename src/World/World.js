@@ -38,10 +38,10 @@ class World {
         container.append(renderer.domElement);
         raycaster = new createRaycaster(camera, scene, renderer);
 
-        const controls = createControls(camera, renderer.domElement);
+        this.controls = createControls(camera, renderer.domElement);
         const { ambientLight, mainLight } = createLights();
 
-        loop.updatables.push(controls);
+        loop.updatables.push(this.controls);
         scene.add(ambientLight, mainLight);
 
         this.epGroup = new Group();
