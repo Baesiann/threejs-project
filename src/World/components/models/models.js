@@ -19,21 +19,21 @@ async function loadModels() {
         whiteQueenData,
         whiteKingData
     ] = await Promise.all([
-        loader.loadAsync('assets/chess_board.glb'),
+        loader.loadAsync('./assets/chess_board.glb'),
 
-        loader.loadAsync('assets/black_pawn.glb'),
-        loader.loadAsync('assets/black_rook.glb'),
-        loader.loadAsync('assets/black_knight.glb'),
-        loader.loadAsync('assets/black_bishop.glb'),
-        loader.loadAsync('assets/black_queen.glb'),
-        loader.loadAsync('assets/black_king.glb'),
+        loader.loadAsync('./assets/black_pawn.glb'),
+        loader.loadAsync('./assets/black_rook.glb'),
+        loader.loadAsync('./assets/black_knight.glb'),
+        loader.loadAsync('./assets/black_bishop.glb'),
+        loader.loadAsync('./assets/black_queen.glb'),
+        loader.loadAsync('./assets/black_king.glb'),
 
-        loader.loadAsync('assets/white_pawn.glb'),
-        loader.loadAsync('assets/white_rook.glb'),
-        loader.loadAsync('assets/white_knight.glb'),
-        loader.loadAsync('assets/white_bishop.glb'),
-        loader.loadAsync('assets/white_queen.glb'),
-        loader.loadAsync('assets/white_king.glb'),
+        loader.loadAsync('./assets/white_pawn.glb'),
+        loader.loadAsync('./assets/white_rook.glb'),
+        loader.loadAsync('./assets/white_knight.glb'),
+        loader.loadAsync('./assets/white_bishop.glb'),
+        loader.loadAsync('./assets/white_queen.glb'),
+        loader.loadAsync('./assets/white_king.glb'),
     ]);
 
     // console.log('board:', boardData, blackRookData);
@@ -60,7 +60,6 @@ async function loadModels() {
         blackRook,
         blackKnight,
         blackBishop,
-        blackKnight,
         blackQueen,
         blackKing,
         whitePawn,
