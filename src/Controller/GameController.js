@@ -123,6 +123,9 @@ class GameController {
     }
 
     finalizeMove(move) {
+        // Capture who is making move
+        const playerTypeMakingMove = this.players[this.state.colorToMove];
+
         // Lock input
         this.isAnimating = true;
 
@@ -160,6 +163,10 @@ class GameController {
             window.dispatchEvent(new CustomEvent('moveMade', {
                 detail: this.state.colorToMove
             }));
+        }
+
+        if (playerTypeMakingMove === 'human' && this.onMoveMade) {
+            this.onMoveMade(move);
         }
     }
 
